@@ -1,4 +1,4 @@
-function runResample(rootDir)
+function runResample(rootDir, appDir)
 
 cd(rootDir);
 [subdirs, num] = findAllDirectory(rootDir);
@@ -51,8 +51,8 @@ for i = 1:num
         continue;
     end
     
-    runResampleForDir(currentDir, nuDir, nuDir, resolution);
-    runResampleForDir(currentDir, brainMaskDir, brainMaskDir, resolution);
+    runResampleForDir(appDir, currentDir, nuDir, nuDir, resolution);
+    runResampleForDir(appDir, currentDir, brainMaskDir, brainMaskDir, resolution);
 
     
     
