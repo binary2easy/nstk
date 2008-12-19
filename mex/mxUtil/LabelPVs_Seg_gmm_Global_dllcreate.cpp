@@ -13,10 +13,10 @@ bool ExistLabel(unsigned int* labels, int lenOfLabels, int label)
 	return false;
 }
 
-void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult, 
-						int xsize, int ysize, int zsize, 
+void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult,
+						int xsize, int ysize, int zsize,
 						int* offsetX, int* offsetY, int* offsetZ, int lenOfOffset,
-						int x, int y, int z, 
+						int x, int y, int z,
 						unsigned int*& neighbors, int& lenOfNeighbors)
 {
 	if ( neighbors == NULL )
@@ -30,15 +30,15 @@ void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult
 	int ndim3 = 3;
 
 // 	unsigned int subs3[3];
-	int subs3[3];
+	mwIndex subs3[3];
 
 	int ind;
 
 	for ( int tt=0; tt<lenOfOffset; tt++ )
 	{
 
-		px = x + offsetX[tt]; 
-		py = y + offsetY[tt]; 
+		px = x + offsetX[tt];
+		py = y + offsetY[tt];
 		pz = z + offsetZ[tt];
 
 		if ( (px>0) && (px<=xsize) && (py>0) && (py<=ysize) && (pz>0) && (pz<=zsize))
@@ -50,7 +50,7 @@ void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult
 			subs3[0] = px-1; // row
 			subs3[1] = py-1; // col
 			subs3[2] = pz-1; // depth
-      
+
       ind = mxCalcSingleSubscript(SegResult, ndim3, subs3);
 			neighbors[lenOfNeighbors] = pSegResult[ind];
 
@@ -61,23 +61,23 @@ void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult
 	return;
 }
 
-// #define TEMP __declspec( dllexport ) 
+// #define TEMP __declspec( dllexport )
 
-void mexFunction( int nlhs, mxArray *plhs[], 
+void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray* prhs[])
 
-{ 
-	// both 4 and 5 classes are supported ... 
+{
+	// both 4 and 5 classes are supported ...
 
 	// priors, N*4 prior array
-	// indexes, N*3 coordinate array	
+	// indexes, N*3 coordinate array
 
 	// segResult, 3D unit32 array <-- all white matter has been labelled into one class
 	// neighborNum <-- 6 or 26
 
 	// lamda
 	// xsize
-	// ysize 
+	// ysize
 	// zsize
 	// csflabel
 
@@ -90,7 +90,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	// nonbrainlabel <-- double scalar, label for every tissue
 
 	// output
-	// LabelSeg, 3D unit32 array with PV voxels labelled as pvlabel 
+	// LabelSeg, 3D unit32 array with PV voxels labelled as pvlabel
 	// priors, N*4 prior array
 
 	if ((nlhs==0) & (nrhs==0))
@@ -101,29 +101,29 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	}
 
 	/* Check for proper input and output arguments */
-	if (nrhs != 13) 
-	{ 
-		mexErrMsgTxt("Thirteen input arguments required."); 
-	} 
-	  
-	if (nlhs != 2) 
+	if (nrhs != 13)
 	{
-		mexErrMsgTxt("Two output arguments required."); 
-	} 
- 
+		mexErrMsgTxt("Thirteen input arguments required.");
+	}
+
+	if (nlhs != 2)
+	{
+		mexErrMsgTxt("Two output arguments required.");
+	}
+
 
 	// parse the input
 	// ============================================================== //
 	//priors
 	int number_of_dims = mxGetNumberOfDimensions(prhs[0]);
-	if ((number_of_dims != 2) || !mxIsSingle(prhs[0])) 
+	if ((number_of_dims != 2) || !mxIsSingle(prhs[0]))
 	{
 		mexErrMsgTxt("priors must be a 2-dimensional single matrix.");
 	}
 
 // 	const unsigned int* dim_Priors = mxGetDimensions(prhs[0]);
-	const int* dim_Priors = mxGetDimensions(prhs[0]);
-	
+	const mwSize* dim_Priors = mxGetDimensions(prhs[0]);
+
 	int N;
 	N = dim_Priors[0]; // the number of voxels
 
@@ -137,39 +137,39 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	// ============================================================== //
 	//indexes
 	number_of_dims = mxGetNumberOfDimensions(prhs[1]);
-	if ((number_of_dims != 2) || !mxIsUint32(prhs[1])) 
+	if ((number_of_dims != 2) || !mxIsUint32(prhs[1]))
 	{
 		mexErrMsgTxt("indexes must be a 2-dimensional uint32 matrix.");
 	}
 
 	unsigned int* pIndexes = static_cast<unsigned int*>(mxGetData(prhs[1]));
 	// ============================================================== //
-	
+
 	// ============================================================== //
 	//segResult
 	number_of_dims = mxGetNumberOfDimensions(prhs[2]);
-	if ((number_of_dims != 3) || !mxIsUint32(prhs[2])) 
+	if ((number_of_dims != 3) || !mxIsUint32(prhs[2]))
 	{
 		mexErrMsgTxt("segResult must be a 3-dimensional uint32 matrix.");
 	}
 
 // 	const unsigned int* dim_SegResult = mxGetDimensions(prhs[2]);
-	const int* dim_SegResult = mxGetDimensions(prhs[2]);
+	const mwSize* dim_SegResult = mxGetDimensions(prhs[2]);
 
 	unsigned int* pSegResult = static_cast<unsigned int*>(mxGetData(prhs[2]));
 	// ============================================================== //
 
 	// ============================================================== //
-	// neighborNum	
+	// neighborNum
 	int neighborNum = static_cast<int>(mxGetScalar(prhs[3]));
 
 	// lamda
 	float lamda = static_cast<float>(mxGetScalar(prhs[4]));
-	
+
 	// xsize
 	int xsize = static_cast<int>(mxGetScalar(prhs[5]));
-	
-	// ysize 
+
+	// ysize
 	int ysize = static_cast<int>(mxGetScalar(prhs[6]));
 
 	// zsize
@@ -207,12 +207,11 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 	// ============================================================== //
 	// output
-	mxArray* LabelSeg = mxCreateNumericArray(3, dim_SegResult, 
-         mxUINT32_CLASS, mxREAL);
+	mxArray* LabelSeg = mxCreateNumericArray(3, dim_SegResult, mxUINT32_CLASS, mxREAL);
 	unsigned int* pLabelSeg = static_cast<unsigned int*>(mxGetData(LabelSeg));
 	memcpy(pLabelSeg, pSegResult, sizeof(unsigned int)*xsize*ysize*zsize);
 	plhs[0] = LabelSeg;
-	
+
 	plhs[1] = mxCreateNumericArray(2, dim_Priors, mxSINGLE_CLASS, mxREAL);
 	float* pOutPutPriors = static_cast<float*>(mxGetData(plhs[1]));
 	memcpy(pOutPutPriors, pPriors, sizeof(float)*N*classNum);
@@ -223,12 +222,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	int ndim = 2;
 
 // 	unsigned int subs[2];
-	int subs[2];
+	mwIndex subs[2];
 
 	int ndim3 = 3;
 
 // 	unsigned int subs3[3];
-	int subs3[3];
+	mwIndex subs3[3];
 
 	int ind;
 	unsigned int* neighbors = NULL; // allocate using mxCalloc, not need to mxFree
@@ -262,7 +261,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				offsetX = static_cast<int*>(mxCalloc(lenOfOffset, sizeof(int)));
 				offsetY = static_cast<int*>(mxCalloc(lenOfOffset, sizeof(int)));
 				offsetZ = static_cast<int*>(mxCalloc(lenOfOffset, sizeof(int)));
-			
+
 				break;
 			}
 		default:
@@ -343,7 +342,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		if ( (label == 0) || (label == csflabel) || (label == nonbrainlabel) )
 			continue;
 
-		GetNeighbourhood_offsets(prhs[2], pSegResult, xsize, ysize, zsize, 
+		GetNeighbourhood_offsets(prhs[2], pSegResult, xsize, ysize, zsize,
 						offsetX, offsetY, offsetZ, lenOfOffset,
 						i, j, k, neighbors, lenOfNeighbors);
 
@@ -362,7 +361,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		subs[1] = 1; // col
 		ind = mxCalcSingleSubscript(prhs[0], ndim, subs);
 		priorCortex = pPriors[ind];
-		
+
 		if ( fourClasses )
 		{
 			subs[0] = pp; // row
@@ -381,12 +380,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			subs[1] = 2; // col
 			ind = mxCalcSingleSubscript(prhs[0], ndim, subs);
 			priorWM1 = pPriors[ind];
-			
+
 			subs[0] = pp; // row
 			subs[1] = 3; // col
 			ind = mxCalcSingleSubscript(prhs[0], ndim, subs);
 			priorWM2 = pPriors[ind];
-			
+
 			priorWM = priorWM1 + priorWM2;
 
 			subs[0] = pp; // row
@@ -414,7 +413,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				}
 
 				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
-				priorCSF = priorCSF + temp;	            
+				priorCSF = priorCSF + temp;
 				processed = true;
 			}
 
@@ -470,8 +469,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				subs3[1] = j-1; // col
 				subs3[2] = k-1; // depth
 				ind = mxCalcSingleSubscript(LabelSeg, ndim3, subs3);
-				pLabelSeg[ind] = pvlabel;					
-				
+				pLabelSeg[ind] = pvlabel;
+
 				subs[0] = pp; // row
 				subs[1] = 0; // col
 				ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
@@ -533,7 +532,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
 
-				priorCSF = priorCSF + temp;	            
+				priorCSF = priorCSF + temp;
   			processed = true;
 			}
 
@@ -544,7 +543,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
 
-				priorCSF = priorCSF + temp;	            
+				priorCSF = priorCSF + temp;
 				processed = true;
 			}
 
@@ -555,7 +554,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
 
-				priorCSF = priorCSF + temp;	            
+				priorCSF = priorCSF + temp;
 				processed = true;
 			}
 
@@ -580,7 +579,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				subs[1] = 1; // col
 				ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 				pOutPutPriors[ind] = priorCortex;
-				
+
 				if ( fourClasses )
 				{
 					subs[0] = pp; // row
@@ -613,6 +612,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 		}
 	}
-	return;	
+	return;
 }
 
