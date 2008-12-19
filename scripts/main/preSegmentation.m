@@ -1,4 +1,4 @@
-function preSegmentation(rootDir, fourClasses_flag, fiveClasses_flag)
+function preSegmentation(rootDir, appDir, fourClasses_flag, fiveClasses_flag)
 
 disp('----------------------------------------------------');
 disp('preSegmentation'); % Previously AllinOne_Before_Segmentation
@@ -42,7 +42,7 @@ for i = 1:num
 end
 
 % Resample the image to be isotropic
-runResample(rootDir);
+runResample(rootDir, appDir);
 
 disp('----------------------------------------------------');
 
