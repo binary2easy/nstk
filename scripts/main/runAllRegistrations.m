@@ -1,4 +1,4 @@
-function runAllRegistrations(rootDir, noOfSubdivisions, templateDir, templateType, cpSpacing)
+function runAllRegistrations(rootDir, appDir, noOfSubdivisions, templateDir, templateType, cpSpacing)
 % Old name allInOne_Registration
 
 disp('----------------------------------------------------');
@@ -59,10 +59,10 @@ for i = 1:noOfSubjects
     
     % Rigid and affine.
     run_rreg_areg(subjID, templateType, targetImage, sourceImage, ...
-                  dofDir, parsFile_rreg, parsFile_areg);
+                  dofDir, parsFile_rreg, parsFile_areg, appDir);
     % Non-rigid.
     run_hreg(subjID, templateType, targetImage, sourceImage, ...
-             dofDir, parsFile_hreg, noOfSubdivisions, cpSpacing, padValue);
+             dofDir, parsFile_hreg, noOfSubdivisions, cpSpacing, padValue, appDir);
 
     %=========================================================================%
 
