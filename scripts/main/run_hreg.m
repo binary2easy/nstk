@@ -48,6 +48,13 @@ end
 
 command = [command  ' -Tp ' num2str(padValue) ' -ds ' num2str(cpSpacing)];
 
-system(command)
+[s, w] = system(command);
+
+if (s ~= 0)
+  disp(w);
+  disp('');
+  disp('run_hreg: error ');
+  error('');
+end
 
 return
