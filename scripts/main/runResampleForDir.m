@@ -1,5 +1,4 @@
-
-function runResampleForDir(home, subdirectory, outputDir, resolution)
+function runResampleForDir(appDir, home, subdirectory, outputDir, resolution)
 % resample the image
 
 suffixPattern = '*.nii.gz';
@@ -46,11 +45,22 @@ for i = 1:num
 %     newname(pPositions(1)) = 'p';
     newfullname = fullfile(home, outputDir, newname);
     
-    command = ['resample' ' ' fullname ' ' newfullname ' ' '-size ' num2str(resolution(1), '%10.8f') ' ' num2str(resolution(2), '%10.8f') ' ' num2str(resolution(3), '%10.8f') ' ' '-bspline'];
-    disp(command)
+    command = [appDir '/resample'];
+    command = [command ' "' fullname '"'];
+    command = [command ' "' newfullname '"'];
+    command = [command ' -size ' num2str(resolution(1), '%10.8f')];
+    command = [command ' ' num2str(resolution(2), '%10.8f')];
+    command = [command ' ' num2str(resolution(3), '%10.8f')];
+    command = [command ' -bspline'];
 
-    %[s, w] = dos(command, '-echo');
-    system(command);
+    [s, w] = system(command);
+
+    if (s ~= 0)
+      disp('Resample failed');
+      disp(command);
+      error('');
+    end
+
 end
 
 disp(['Resampling done for directory: ' subdirectory]);
