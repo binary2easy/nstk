@@ -1,5 +1,5 @@
 function run_rreg_areg(targetID, sourceID, targetImage, sourceImage,...
-    dofDir, parsFile_rreg, parsFile_areg)
+    dofDir, parsFile_rreg, parsFile_areg, appDir)
 
 % Perform the rigid, affine and non-rigid registration.
 %
@@ -18,11 +18,21 @@ dofout_rreg = fullfile(dofDir, dofout_rreg);
 % See if we need to run rreg.
 if (~exist(dofout_rreg))
     % rreg command:
-    command = ['rreg' ' ' targetImage ' ' sourceImage ' -parameter ' parsFile_rreg ' -dofout ' dofout_rreg];
+    command = [appDir '/rreg'];
+    command = [command ' "' targetImage '"'];
+    command = [command ' "' sourceImage '"'];
+    command = [command ' -parameter "' parsFile_rreg '"'];
+    command = [command ' -dofout "' dofout_rreg '"'];
     if (exist(dofin_rreg))
-        command = [command ' -dofin ' dofin_rreg];
+        command = [command ' -dofin "' dofin_rreg '"'];
     end
-    system(command)
+    
+    [s, w] = system(command);
+    
+    if (s ~= 0)
+      disp('run_rreg_areg error: rreg failed.');
+      error('');
+    end    
 end
 
 aregPrefix  = ['areg-' sourceID '-' targetID];
@@ -40,9 +50,19 @@ if (~exist(dofout_areg))
     end
 
     % areg command
-    command = ['areg' ' ' targetImage ' ' sourceImage ' -parameter ' parsFile_areg ];
-    command = [command ' -dofout ' dofout_areg ' -dofin ' dofin_areg];
-    system(command)
+    command = [appDir '/areg'];
+    command = [command ' "' targetImage '"'];
+    command = [command ' "' sourceImage '"'];
+    command = [command ' -parameter "' parsFile_areg '"'];
+    command = [command ' -dofout "' dofout_areg '"'];
+    command = [command ' -dofin "' dofin_areg '"'];
+
+    [s, w] = system(command);
+    
+    if (s ~= 0)
+      disp('run_rreg_areg error: areg failed.');
+      error('');
+    end    
 end
 
 return
