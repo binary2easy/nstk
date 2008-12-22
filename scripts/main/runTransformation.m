@@ -11,7 +11,7 @@ if (exist(output))
     return;
 end
 
-command = [appDir 'transformation ' srcImg ' ' output ' -dofin ' dofName ' -target ' target ' -bspline' ];
+command = [appDir '/transformation ' srcImg ' ' output ' -dofin ' dofName ' -target ' target ' -bspline' ];
 disp(command);
 system(command);
 
