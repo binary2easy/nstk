@@ -3,6 +3,16 @@
 #include <string.h>
 #include <mexExport.h>
 
+// Defines needed if matlab version < 7.3
+
+#ifndef mwSize
+#define mwSize int
+#endif
+
+#ifndef mwIndex
+#define mwIndex int
+#endif
+
 bool ExistLabel(unsigned int* labels, int lenOfLabels, int label)
 {
 	for ( int i=0; i<lenOfLabels; i++ )
