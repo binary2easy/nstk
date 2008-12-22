@@ -53,10 +53,6 @@ void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult
 
 		if ( (px>0) && (px<=xsize) && (py>0) && (py<=ysize) && (pz>0) && (pz<=zsize))
 		{
-      // PA CHANGING SUBSCRIPTS XY
-      //subs3[0] = py-1; // row
-			//subs3[1] = px-1; // col
-			//subs3[2] = pz-1; // depth
 			subs3[0] = px-1; // row
 			subs3[1] = py-1; // col
 			subs3[2] = pz-1; // depth
@@ -70,8 +66,6 @@ void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult
 
 	return;
 }
-
-// #define TEMP __declspec( dllexport )
 
 void mexFunction( int nlhs, mxArray *plhs[],
                   int nrhs, const mxArray* prhs[])
@@ -131,7 +125,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		mexErrMsgTxt("priors must be a 2-dimensional single matrix.");
 	}
 
-// 	const unsigned int* dim_Priors = mxGetDimensions(prhs[0]);
 	const mwSize* dim_Priors = mxGetDimensions(prhs[0]);
 
 	int N;
@@ -163,7 +156,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		mexErrMsgTxt("segResult must be a 3-dimensional uint32 matrix.");
 	}
 
-// 	const unsigned int* dim_SegResult = mxGetDimensions(prhs[2]);
 	const mwSize* dim_SegResult = mxGetDimensions(prhs[2]);
 
 	unsigned int* pSegResult = static_cast<unsigned int*>(mxGetData(prhs[2]));
@@ -231,12 +223,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	unsigned int label = 0;
 	int ndim = 2;
 
-// 	unsigned int subs[2];
 	mwIndex subs[2];
 
 	int ndim3 = 3;
 
-// 	unsigned int subs3[3];
 	mwIndex subs3[3];
 
 	int ind;
@@ -319,16 +309,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		subs[0] = pp; // row
 		subs[1] = 0; // col
 		ind = mxCalcSingleSubscript(prhs[1], ndim, subs);
-    // PA CHANGING XY INDICES
-		// j = pIndexes[ind];
 		i = pIndexes[ind];
 
 		subs[0] = pp; // row
 		subs[1] = 1; // col
 		ind = mxCalcSingleSubscript(prhs[1], ndim, subs);
-		// PA CHANGING XY INDICES
-		// i = pIndexes[ind];
-    j = pIndexes[ind];
+                j = pIndexes[ind];
 
 		subs[0] = pp; // row
 		subs[1] = 2; // col
@@ -339,9 +325,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		// label = segResult(j, i, k);
 
 		// PA CHANGING XY INDICES
-    //subs3[0] = j-1; // row
-		//subs3[1] = i-1; // col
-		//subs3[2] = k-1; // depth
 		subs3[0] = i-1; // row
 		subs3[1] = j-1; // col
 		subs3[2] = k-1; // depth
@@ -417,7 +400,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 				if ( !fourClasses )
 				{
-          priorWM1 = priorWM1*lamda;
+                                  priorWM1 = priorWM1*lamda;
 
 					priorWM2 = priorWM2*lamda;
 				}
@@ -432,7 +415,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			{
 				priorWM = priorWM*lamda;
 
-        if ( !fourClasses )
+                                if ( !fourClasses )
 				{
 					priorWM1 = priorWM1*lamda;
 					priorWM2 = priorWM2*lamda;
@@ -453,7 +436,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			{
 				priorWM = priorWM*lamda;
 
-        if ( !fourClasses )
+                                if ( !fourClasses )
 				{
 					priorWM1 = priorWM1*lamda;
 					priorWM2 = priorWM2*lamda;
@@ -461,7 +444,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
 
-        csfNew    = priorCSF + temp * priorCSF / (priorCSF+priorCortex+eps);
+                                csfNew    = priorCSF + temp * priorCSF / (priorCSF+priorCortex+eps);
 				cortexNew = priorCortex + temp * priorCortex / (priorCSF+priorCortex+eps);
 
 				priorCSF    = csfNew;
@@ -471,10 +454,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
       if (processed)
 			{
-        // PA CHANGING XY SUBSCRIPTS
-        //subs3[0] = j-1; // row
-				//subs3[1] = i-1; // col
-				//subs3[2] = k-1; // depth
 				subs3[0] = i-1; // row
 				subs3[1] = j-1; // col
 				subs3[2] = k-1; // depth
@@ -546,7 +525,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
   			processed = true;
 			}
 
-      // between csf and 0
+                        // between csf and 0
 			if ( hasCSF && (label == 0) && !processed)
 			{
 				priorCortex = priorCortex*lamda;
@@ -570,11 +549,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 			if (processed)
 			{
-        // PA CHANGING XY SUBSCRIPTS.
-        //subs3[0] = j-1; // row
-				//subs3[1] = i-1; // col
-				//subs3[2] = k-1; // depth
-        subs3[0] = i-1; // row
+                          subs3[0] = i-1; // row
 				subs3[1] = j-1; // col
 				subs3[2] = k-1; // depth
 				ind = mxCalcSingleSubscript(LabelSeg, ndim3, subs3);
