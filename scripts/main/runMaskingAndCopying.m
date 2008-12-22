@@ -47,9 +47,15 @@ for i = 1:num
     
     if ( ~ exist(unmaskedBrainCurr, 'file') )
         % Save to a short type file called withStemBrain_N3
-        command = [appDir 'convert ' anatomyCurr ' ' unmaskedBrainCurr ' -grey'];
+        command = [appDir '/convert ' anatomyCurr ' ' unmaskedBrainCurr ' -grey'];
         disp(command);
-        system(command);
+        [s, w] = system(command);
+
+        if (s ~= 0)
+            disp('runMaskingAndCopying : convert failed');
+            disp(command);
+            error('');
+        end
     end
         
 %     [data, header] = loadAnalyze(anatomyCurr, 'Grey');
@@ -64,9 +70,15 @@ for i = 1:num
     
     if (exist(maskNative, 'file'))
         % Incorporate info from native mask to modify propagated mask.
-        command = [appDir 'padding ' maskCurr ' ' maskNative ' ' maskCurr ' 0 0'];
+        command = [appDir '/padding ' maskCurr ' ' maskNative ' ' maskCurr ' 0 0'];
         disp(command);
-        system(command);
+        [s, w] = system(command);
+
+        if (s ~= 0)
+            disp('runMaskingAndCopying : padding failed');
+            disp(command);
+            error('');
+        end
     end
     
     maskedBrainCurr   = fullfile(anatomyDir, maskedBrainName);
@@ -74,9 +86,15 @@ for i = 1:num
     if ( ~exist(maskedBrainCurr, 'file') )
         % Use the transformed mask of the brain from the template to the
         % current subject to mask of the brain (no stem).
-        command = [appDir 'padding ' anatomyCurr ' ' maskCurr ' ' maskedBrainCurr ' 0 0'];
+        command = [appDir '/padding ' anatomyCurr ' ' maskCurr ' ' maskedBrainCurr ' 0 0'];
         disp(command);
-        system(command);
+        [s, w] = system(command);
+
+        if (s ~= 0)
+            disp('runMaskingAndCopying : padding failed');
+            disp(command);
+            error('');
+        end
     end
     
 %     % Where is the transformed mask of the brain (no stem) from the
