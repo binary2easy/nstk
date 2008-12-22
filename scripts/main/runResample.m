@@ -48,7 +48,7 @@ for i = 1:num
     resolution = [res res res];
     
     if ( (header.xvoxelsize == header.yvoxelsize) && (header.yvoxelsize == header.zvoxelsize) )
-        continue;
+        % continue;
     end
     
     runResampleForDir(appDir, currentDir, nuDir, nuDir, resolution);
@@ -58,7 +58,14 @@ for i = 1:num
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
+    % Marker to indicate an image has been resampled.
+    marker = '-r';
+    
     for i = 1:length(inMaskDir)
+        if findstr(marker, inMaskDir(i).name)
+            % Leave resampled images in the directory.
+            continue
+        end
         brainMaskfile = fullfile(currentDir, brainMaskDir, inMaskDir(i).name);
         movefile(brainMaskfile, fullfile(currentDir, backupDir));
     end
@@ -69,6 +76,10 @@ for i = 1:num
 %     end
     
     for i = 1:length(inNUDir)
+        if findstr(marker, inNUDir(i).name)
+            % Leave resampled images in the directory.
+            continue
+        end
         imagefile = fullfile(currentDir, nuDir, inNUDir(i).name);
         movefile(imagefile, fullfile(currentDir, backupDir));
     end
