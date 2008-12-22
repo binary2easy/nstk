@@ -1,21 +1,21 @@
 // #include <mexExport.h>
 
-/*#ifndef _MEXFUNCTION
+// #ifndef _MEXFUNCTION
 
-#ifdef __cpluslus
+// #ifdef __cpluslus
 
-#define _MEXFUNCTION extern"C"__declspec(dllimport)
+// #define _MEXFUNCTION extern"C"__declspec(dllimport)
 
-#else
+// #else
 
-#define _MEXFUNCTION __declspec(dllimport)
+// #define _MEXFUNCTION __declspec(dllimport)
 
-#endif
+// #endif
 
-#endif*/
+// #endif
 
 
-//#include <mclmcr.h> 
+// #include <mclmcr.h> 
 
 #include <matrix.h>
 
