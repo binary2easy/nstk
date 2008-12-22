@@ -12,9 +12,15 @@ if (exist(output))
     return;
 end
 
-command = [appDir 'transformation ' srcImg ' ' output ' -dofin ' dofName ' -target ' target ' -linear' ];
+command = [appDir '/transformation ' srcImg ' ' output ' -dofin ' dofName ' -target ' target ' -linear' ];
 disp(command);
-system(command);
+[s, w] = system(command);
+
+if (s ~= 0)
+    disp('runTransformationBinary : transformation failed');
+    disp(command);
+    error('');
+end
 
 [data, header] = loadAnalyze(output, 'Grey');
 se = strel('ball', 3, 3, 0);
