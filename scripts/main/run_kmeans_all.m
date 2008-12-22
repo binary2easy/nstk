@@ -9,8 +9,8 @@ resultDirName  = 'result';
 
 suffix = '.nii.gz';
 
-noStemBrain = ['noStemBrain_N3' suffix];
-maskName    = ['brainmask_nostem' suffix];
+noStemBrain = ['noStemBrain_N3-r' suffix];
+maskName    = ['brainmask_nostem-r' suffix];
 
 % ============================================================== %
 % Looks like a global, needed for run_kmeans.  Moved into that script 
