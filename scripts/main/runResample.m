@@ -47,14 +47,10 @@ for i = 1:num
     res = min([header.xvoxelsize header.yvoxelsize header.zvoxelsize]);
     resolution = [res res res];
     
-    if ( (header.xvoxelsize == header.yvoxelsize) && (header.yvoxelsize == header.zvoxelsize) )
-        % continue;
-    end
+    disp(['Resampling in directory: ' subdirs{i}]);
     
     runResampleForDir(appDir, currentDir, nuDir, nuDir, resolution);
     runResampleForDir(appDir, currentDir, brainMaskDir, brainMaskDir, resolution);
-
-    
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
