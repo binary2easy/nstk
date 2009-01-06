@@ -2,13 +2,9 @@
 function [csfT, wmT, gmT, outlierT] = CreateTemplates_4classes_Gaussian(header, csfSeg, wmSeg, gmSeg, outlierSeg, ...
                     sigmaCSF, sigmaWM, sigmaGM, sigmaOutlier)
 
-% Previous signature:                
-% function [csfT, wmT, cortexT, outlierT] = CreateTemplates_4classes_Gaussian(header, csfSeg, wmSeg, gmSeg, outlierSeg, ...
-%                     sigmaCSF, sigmaWM, sigmaGM, sigmaOutlier, halfwidthCsf, halfwidthWm, halfwidthCortex, halfwidthOutlier)
-
-disp('create templates ...');
-
 % Create probability templates by blurring hard label maps.
+
+disp('Create templates by blurring k-means result (4 classes).');
 
 csfT     = single(csfSeg);
 gmT      = single(gmSeg);
@@ -47,64 +43,3 @@ csfT(noneInds)     = temp;
 outlierT(noneInds) = temp;
 
 return;
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Older slower code:
-% csfflag = 0;
-% wmflag = 0;
-% cortexflag = 0;
-% outlierflag = 0;
-% 
-% tic;
-% 
-% for k = 1:header.zsize
-%     for j = 1:header.ysize
-%         for i = 1:header.xsize
-%             
-%             csfflag     = 0;
-%             wmflag      = 0;
-%             cortexflag  = 0;
-%             outlierflag = 0;
-%             
-%             p_csf     = G_csfT(i, j, k);
-%             p_wm      = G_wmT(i, j, k);
-%             p_cortex  = G_cortexT(i, j, k);
-%             p_outlier = G_outlierT(i, j, k);
-% 
-%             if (G_csfT(i, j, k) > minP)
-%                 csfflag = 1;
-%             end
-%             
-%             if (G_wmT(i, j, k) > minP)
-%                 wmflag = 1;
-%             end
-%             
-%             if (G_cortexT(i, j, k) > minP)
-%                 cortexflag = 1;
-%             end
-%             
-%             if (G_outlierT(i, j, k) > minP)
-%                 outlierflag = 1;
-%             end
-%             
-%             if (csfflag + wmflag + cortexflag + outlierflag == 0)
-%                 continue;
-%             end
-%             
-%             sum = p_csf + p_wm + p_cortex + p_outlier;
-%             
-%             csfT(i, j, k)     = p_csf / sum;
-%             wmT(i, j, k)      = p_wm / sum;
-%             cortexT(i, j, k)  = p_cortex / sum;
-%             outlierT(i, j, k) = p_outlier / sum;
-%             
-% %             csfT(i, j, k) = 0.33;
-% %             wmT(i, j, k) = 0.33;
-% %             cortexT(i, j, k) = 0.33;
-% 
-%         end
-%     end
-% end
-% 
-% t1 = toc;
-% 
