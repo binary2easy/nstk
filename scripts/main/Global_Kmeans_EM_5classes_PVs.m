@@ -55,8 +55,7 @@ halfwidthOutlier = 2;
 clear LabeledSeg
 
 [csfT, wmT1, wmT2, cortexT, outlierT] = CreateTemplates_5classes_Gaussian(header, csfSeg, wmSeg1, wmSeg2, gmSeg, outlierSeg, ...
-                    sigmaCSF, sigmaWM1, sigmaWM2, sigmaCortex, sigmaOutlier, ...
-                    halfwidthCsf, halfwidthWm1, halfwidthWm2, halfwidthCortex, halfwidthOutlier);
+                    sigmaCSF, sigmaWM1, sigmaWM2, sigmaCortex, sigmaOutlier);
 
 
 % EM segmentation
@@ -116,16 +115,16 @@ options(5) = 1;
 
 filename = [Global_SegResult prefix '_segResult_5classes.hdr'];
 
-% SaveAnalyze(results, header, filename, 'Grey' );
+% saveAnalyze(results, header, filename, 'Grey' );
 
 % save posterior as data file
 % [post_csf, post_wm1, post_wm2, post_gm, post_outlier] = GetPostImage_5classes(mix, header, post);
 % 
-% SaveAnalyze(uint32(post_csf), header, 'posterior/post_csf.hdr', 'Grey' );
-% SaveAnalyze(uint32(post_wm1), header, 'posterior/post_wm1.hdr', 'Grey' );
-% SaveAnalyze(uint32(post_wm2), header, 'posterior/post_wm2.hdr', 'Grey' );
-% SaveAnalyze(uint32(post_gm), header, 'posterior/post_gm.hdr', 'Grey' );
-% SaveAnalyze(uint32(post_outlier), header, 'posterior/post_outlier.hdr', 'Grey' );
+% saveAnalyze(uint32(post_csf), header, 'posterior/post_csf.hdr', 'Grey' );
+% saveAnalyze(uint32(post_wm1), header, 'posterior/post_wm1.hdr', 'Grey' );
+% saveAnalyze(uint32(post_wm2), header, 'posterior/post_wm2.hdr', 'Grey' );
+% saveAnalyze(uint32(post_gm), header, 'posterior/post_gm.hdr', 'Grey' );
+% saveAnalyze(uint32(post_outlier), header, 'posterior/post_outlier.hdr', 'Grey' );
 After_gmmem_step_5classes
 % ====================================================== %
 % detect PVs
@@ -142,7 +141,7 @@ LabeledSeg = LabelPVs_Seg_slow_fillLabeledSeg(double(results), header, ...
                                     nonbrainlabel, neighborwidth);
 
 filename = [Global_SegResult prefix '_segResult_5classes_PVs.hdr'];
-SaveAnalyze(uint32(LabeledSeg), header, filename, 'Grey');
+saveAnalyze(uint32(LabeledSeg), header, filename, 'Grey');
 
 
 volumeThreshold = 200;
@@ -151,10 +150,10 @@ label = [2];
 [label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
 
 filename = [Global_SegResult prefix '_cortex_seg.hdr'];
-SaveAnalyze(uint32(largestComponent), header, filename, 'Grey');
+saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
 
 filename = [Global_SegResult 'cortex_seg.hdr'];
-SaveAnalyze(uint32(largestComponent), header, filename, 'Grey');
+saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
 
 volumeThreshold = 200;
 label = [3 4];
@@ -162,17 +161,17 @@ label = [3 4];
 [label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
 
 filename = [Global_SegResult prefix '_wm_seg.hdr'];
-SaveAnalyze(uint32(largestComponent), header, filename, 'Grey');
+saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
 
 filename = [Global_SegResult 'wm_seg.hdr'];
-SaveAnalyze(uint32(label3D), header, filename, 'Grey');
+saveAnalyze(uint32(label3D), header, filename, 'Grey');
 
 label3D = zeros(size(LabeledSeg), 'uint32');
 label3D(LabeledSeg == csflabel) = 1;
 filename = [Global_SegResult prefix '_csf_seg.hdr'];
-SaveAnalyze(label3D, header, filename, 'Grey');
+saveAnalyze(label3D, header, filename, 'Grey');
 
 filename = [Global_SegResult 'csf_seg.hdr'];
-SaveAnalyze(label3D, header, filename, 'Grey');
+saveAnalyze(label3D, header, filename, 'Grey');
 
 clear LabeledSeg post label3D largestComponent
