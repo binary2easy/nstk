@@ -12,8 +12,8 @@ post5DirName   = 'post5';
 
 suffix = '.nii.gz';
 
-noStemBrain = ['noStemBrain_N3-r' suffix];
-maskName    = ['brainmask_nostem-r' suffix];
+noStemBrain = ['noStemBrain_N3' suffix];
+maskName    = ['brainmask_nostem' suffix];
 
 for i = 1:num
 
@@ -73,7 +73,7 @@ for i = 1:num
     files = dir(fullfile(subjPars.anatDir, noStemBrain));
     if ((numel(files) == 0) || (numel(files) > 1))
         disp('WholeDir_Segmentation.m : ');
-        disp(['Zero or multiple no-stem anatomy images in ' anatDir]);
+        disp(['Zero or multiple no-stem anatomy images in ' subjPars.anatDir]);
         error('');
     end
     
