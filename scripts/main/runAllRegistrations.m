@@ -4,7 +4,7 @@ function runAllRegistrations(rootDir, appDir, noOfSubdivisions, templateDir, tem
 disp('----------------------------------------------------');
 disp('Running all regstrations.');
 
-[subdirs, noOfSubjects] = FindAllDirectory(rootDir);
+[subdirs, noOfSubjects] = findAllDirectory(rootDir);
 
 imageSuffix = '.nii.gz';
 
