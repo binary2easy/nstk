@@ -12,21 +12,35 @@ end
 % Replaced a variable called TryNumber:
 replicates = 8;
 
-% Check if initial centroids are available.
+[brainmask, maskHeader]  = loadAnalyze(pars.brainMaskfile,'Grey');
+[imagedata, imageHeader] = loadAnalyze(pars.imagefile,'Grey');
+
+[data, indices] = kmean_init(imagedata, imageHeader, brainmask);
+
+% Check if initial centroids are available in a file.
 if ( exist(centresFile, 'file') )
     initialCentres = readKmeanCentres(centresFile, noOfClasses); 
-    disp(initialCentres);
+else
+  % No file, try a guess some good centres.
+  centiles = [];
+  if (noOfClasses == 4)
+    centiles = [25 50 75 90];
+  elseif (noOfClasses == 5)
+    centiles = [25 50 70 80 90];
+  end  
+
+  initialCentres = prctile(data, centiles);
 end
+
+disp('run_kmeans.m:  Using the following initial Centres ... ');
+disp(initialCentres);
 
 %  A hack value to apply appropriate noise to the centres for kmeans
 %  repetitions
 scale = getScaleForCentrePerturbation(initialCentres);
 
 
-[brainmask, maskHeader]  = loadAnalyze(pars.brainMaskfile,'Grey');
-[imagedata, imageHeader] = loadAnalyze(pars.imagefile,'Grey');
 
-[data, indices] = kmean_init(imagedata, imageHeader, brainmask);
 
 if isempty(initialCentres)
     % Cannot specify a starting set of centres for each class, use default
@@ -67,7 +81,7 @@ end
 filename = fullfile(pars.resultDir, outputLabelsName);
 kmeansHeader = imageHeader;
 
-SaveAnalyze(kmeansLabels, kmeansHeader, filename, 'Grey' );
+saveAnalyze(kmeansLabels, kmeansHeader, filename, 'Grey' );
 
 return
 
