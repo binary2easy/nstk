@@ -73,7 +73,7 @@ end
 
 if (noOfClasses == 5)
     % NEED TO WORK THROUGH EVERYTHING BELOW THIS FILE.
-%    Global_Kmeans_EM_5classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask);
+    Global_Kmeans_EM_5classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask);
 end
 
 
