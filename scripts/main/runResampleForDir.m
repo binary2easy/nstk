@@ -1,8 +1,8 @@
-function runResampleForDir(appDir, home, subdirectory, outputDir, resolution)
+function runResampleForDir(appDir, rootDir, subdirectory, outputDir, resolution)
 % resample the image
 
 suffixPattern = '*.nii.gz';
-dirString = fullfile(home, subdirectory, suffixPattern);
+dirString = fullfile(rootDir, subdirectory, suffixPattern);
 indir = dir(dirString) ;
 
 num = length(indir);
@@ -30,7 +30,7 @@ marker = '-r';
 suffix = '.nii.gz';
 
 for i = 1:num
-    fullname = fullfile(home, subdirectory, indir(i).name);
+    fullname = fullfile(rootDir, subdirectory, indir(i).name);
 
     % Assume that we have a .nii.gz file, PA.
     temp = strrep(fullname, '.gz', '');
@@ -39,11 +39,18 @@ for i = 1:num
     if findstr(marker, name)
         continue
     end
-
+    
     newname = [name marker suffix];
 %     pPositions = find(newname == '.');
 %     newname(pPositions(1)) = 'p';
-    newfullname = fullfile(home, outputDir, newname);
+    newfullname = fullfile(rootDir, outputDir, newname);
+    
+    header = loadAnalyzeHeader(fullname);
+    if ( (header.xvoxelsize == header.yvoxelsize) && (header.yvoxelsize == header.zvoxelsize))
+        copyfile(fullname, newfullname);
+        continue
+    end
+    
     
     command = [appDir '/resample'];
     command = [command ' "' fullname '"'];
