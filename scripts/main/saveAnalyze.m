@@ -1,6 +1,6 @@
 function saveAnalyze(data, header, analyzename, realORgrey)
 
-% SaveAnalyze, save data and headr as an analyze file(.hdr)
+% saveAnalyze, save data and headr as an analyze file(.hdr)
 % input: data, header, name of analyze file, label of Grey image('Grey') or Real image('Real')
 % output: 0 normal 1 failed
 % Grey: UINT32; Real: single
@@ -9,7 +9,7 @@ function saveAnalyze(data, header, analyzename, realORgrey)
 % scripts into this one.
 %
 %
-% SaveAnalyze(data, header, analyzename, realORgrey)
+% saveAnalyze(data, header, analyzename, realORgrey)
 %
 % argument is 'analyzename' but can save nii also...
 %
