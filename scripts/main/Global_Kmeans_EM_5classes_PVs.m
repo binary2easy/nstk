@@ -1,5 +1,8 @@
+function Global_Kmeans_EM_5classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask)
 
-Perform_Kmeans
+% Perform_Kmeans
+
+[kmeans_label, kmeansHeader] = loadAnalyze(subjPars.kmeansLabels5, 'Grey');
 
 [csflabel, cortexlabel, wmlabel1, wmlabel2, outlierlabel] = GetClassLabel_5classes(imagedata, kmeans_label);
 
