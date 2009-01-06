@@ -5,12 +5,13 @@
 
 // Defines needed if matlab version < 7.3
 
-#ifndef mwSize
-#define mwSize int
-#endif
-
-#ifndef mwIndex
-#define mwIndex int
+// Hack to see if the following typdefs have or have not been
+// made.  Matlab versions >7.3 do the typedef and define the
+// following preproc. definition.  If it is not defined, we need
+// to do a typedef.
+#ifndef MWSIZE_MAX
+typedef int mwIndex;
+typedef int mwSize;
 #endif
 
 bool ExistLabel(unsigned int* labels, int lenOfLabels, int label)
