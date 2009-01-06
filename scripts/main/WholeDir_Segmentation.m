@@ -12,8 +12,8 @@ post5DirName   = 'post5';
 
 suffix = '.nii.gz';
 
-noStemBrain = ['noStemBrain_N3' suffix];
-maskName    = ['brainmask_nostem' suffix];
+noStemBrain = ['noStemBrain_N3-r' suffix];
+maskName    = ['brainmask_nostem-r' suffix];
 
 for i = 1:num
 
