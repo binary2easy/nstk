@@ -1,16 +1,11 @@
-
 function [post_csf, post_wm, post_gm, post_outlier] = GetPostImage_4classes(mix, header, post)
+
 % transform posterior as image file
 
 xsize = header.xsize;
 ysize = header.ysize;
 zsize = header.zsize;
 
-% PA CHANGING XY SUBSCRIPTS.
-% post_csf     = zeros([ysize xsize zsize], 'uint16');
-% post_wm      = zeros([ysize xsize zsize], 'uint16');
-% post_gm      = zeros([ysize xsize zsize], 'uint16');
-% post_outlier = zeros([ysize xsize zsize], 'uint16');
 post_csf     = zeros([xsize ysize zsize], 'uint16');
 post_wm      = zeros([xsize ysize zsize], 'uint16');
 post_gm      = zeros([xsize ysize zsize], 'uint16');
