@@ -50,11 +50,7 @@ clear prior_wm prior_gm
 
 LabelPVs_Image = GetLabelPVs_Image(mix);
 
-% if ( ~exist(posteriorDir) )
-%     posteriorDir = 'posterior_4classes';
-% end
-%
-% mkdir(posteriorDir);
+
 
 filename = fullfile(subjPars.postDir, ['LabelPVs_Image' suffix]);
 saveAnalyze(uint32(LabelPVs_Image), header, filename, 'Grey' );
@@ -73,6 +69,7 @@ saveAnalyze(uint32(post_outlier), header, filename, 'Grey' );
 
 filename = fullfile(subjPars.postDir, ['post_csf' suffix]);
 saveAnalyze(uint32(LabelPVs_Image), header, filename, 'Grey' );
+
 
 [post_csf, post_wm, post_gm, post_outlier] = GetPostImage_Real_4classes(mix, header, post);
 
