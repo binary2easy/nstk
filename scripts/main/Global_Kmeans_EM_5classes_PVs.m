@@ -1,6 +1,6 @@
 function Global_Kmeans_EM_5classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask)
 
-% Perform_Kmeans
+suffix = '.nii.gz';
 
 [kmeans_label, kmeansHeader] = loadAnalyze(subjPars.kmeansLabels5, 'Grey');
 
@@ -45,7 +45,7 @@ sigmaWM2 = 2*header.xvoxelsize;
 sigmaCortex = 2*header.xvoxelsize;
 sigmaOutlier = header.xvoxelsize;
 
-
+% Can probably ditch the following, and in 4 class version
 halfwidthCsf = 3;
 halfwidthWm1 = 3;
 halfwidthWm2 = 2;
@@ -78,69 +78,50 @@ initParameters.eps = 0.02;
                             options, initType, initParameters);
 clear csfT cortexT wmT1 wmT2 outlierT
 
-% samplefactor = 1;
-% xsize = header.xsize;
-% ysize = header.ysize;
-% zsize = header.zsize;
-% DIM = [ysize xsize zsize];
-% ind1 = [1:samplefactor:DIM(1)]';    
-% ind2 = [1:samplefactor:DIM(2)]';
-% ind3 = [1:samplefactor:DIM(3)]';
-% [ind1,ind2,ind3] = ndgrid(ind1,ind2,ind3);
-% mix.sampleInd = ind1 + (ind2-1)*DIM(1) + (ind3-1)*DIM(1)*DIM(2);
-% insideROI = find(mix.playing(mix.sampleInd(:)));
-% mix.sampleInd = mix.sampleInd(insideROI);
-% 
-% clear ind1 ind2 ind3 insideROI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Set up options for GMM EM.
 
-% set up options
 options = zeros(1,18);
+% Display error values
 options(1) = 1;
+% Maximum number of iterations
 options(14) = 35;
+%%% PA TEMP CHANGE FOR DEBUGGING.
+% options(14) = 1;
+% Min change in error function for the stopping condition.
 options(3) = 1.0e-3;
+% Reset covariance matrix to original value when any of its singular
+% values is too small.
 options(5) = 1;
-% [mix, options, errlog] = gmmem_image_PVs(mix, x, options);
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 [mix, options, errlog] = gmmem_image_PVs_WM2CSF(mix, x, options);
 
 % compute the posterior probablities
 [post, a] = gmmpost_image(mix, x);
 
-% save results
-% results = zeros(size(imagedata), 'uint32');
-% [ndata, ndim] = size(mix.indexes);
-% for i = 1:ndata
-%     label = find(post(i,:) == max(post(i,:)));
-%     results(mix.indexes(i, 1), mix.indexes(i, 2), mix.indexes(i, 3)) = label(1);
-% end
 
-filename = [Global_SegResult prefix '_segResult_5classes.hdr'];
+prefix = 'prefix';
 
-% saveAnalyze(results, header, filename, 'Grey' );
 
-% save posterior as data file
-% [post_csf, post_wm1, post_wm2, post_gm, post_outlier] = GetPostImage_5classes(mix, header, post);
-% 
-% saveAnalyze(uint32(post_csf), header, 'posterior/post_csf.hdr', 'Grey' );
-% saveAnalyze(uint32(post_wm1), header, 'posterior/post_wm1.hdr', 'Grey' );
-% saveAnalyze(uint32(post_wm2), header, 'posterior/post_wm2.hdr', 'Grey' );
-% saveAnalyze(uint32(post_gm), header, 'posterior/post_gm.hdr', 'Grey' );
-% saveAnalyze(uint32(post_outlier), header, 'posterior/post_outlier.hdr', 'Grey' );
-After_gmmem_step_5classes
+results = After_gmmem_step_5classes(imagedata, header, mix, post, subjPars);
+
 % ====================================================== %
 % detect PVs
-csflabel = 1;
-wmlabel = [3 4];
-cortexlabel =  2;
-pvlabel = 0;
-
+pvlabel       = 0;
+csflabel      = 1;
+cortexlabel   =  2;
+wmlabel       = [3 4];
 nonbrainlabel = 5;
+
 neighborwidth = 3;
 
 LabeledSeg = LabelPVs_Seg_slow_fillLabeledSeg(double(results), header, ...
                                     csflabel, wmlabel, cortexlabel, pvlabel,...
                                     nonbrainlabel, neighborwidth);
 
-filename = [Global_SegResult prefix '_segResult_5classes_PVs.hdr'];
+filename = fullfile(subjPars.resultDir, [prefix '_segResult_5classes_PVs' suffix]);
 saveAnalyze(uint32(LabeledSeg), header, filename, 'Grey');
 
 
@@ -149,29 +130,30 @@ label = [2];
 
 [label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
 
-filename = [Global_SegResult prefix '_cortex_seg.hdr'];
+filename = fullfile(subjPars.resultDir, [prefix '_cortex_seg' suffix]);
 saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
 
-filename = [Global_SegResult 'cortex_seg.hdr'];
-saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
+filename = fullfile(subjPars.resultDir, ['cortex_seg_5classes' suffix]);
+saveAnalyze(uint32(label3D), header, filename, 'Grey');
 
 volumeThreshold = 200;
 label = [3 4];
 
 [label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
 
-filename = [Global_SegResult prefix '_wm_seg.hdr'];
+filename = fullfile(subjPars.resultDir, [prefix '_wm_seg' suffix]);
 saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
 
-filename = [Global_SegResult 'wm_seg.hdr'];
+filename = fullfile(subjPars.resultDir, ['wm_seg_5classes' suffix]);
 saveAnalyze(uint32(label3D), header, filename, 'Grey');
 
 label3D = zeros(size(LabeledSeg), 'uint32');
 label3D(LabeledSeg == csflabel) = 1;
-filename = [Global_SegResult prefix '_csf_seg.hdr'];
+
+filename = fullfile(subjPars.resultDir, [prefix '_csf_seg' suffix]);
 saveAnalyze(label3D, header, filename, 'Grey');
 
-filename = [Global_SegResult 'csf_seg.hdr'];
+filename = fullfile(subjPars.resultDir, ['csf_seg_5classes' suffix]);
 saveAnalyze(label3D, header, filename, 'Grey');
 
 clear LabeledSeg post label3D largestComponent
