@@ -6,11 +6,6 @@ xsize = header.xsize;
 ysize = header.ysize;
 zsize = header.zsize;
 
-% PA CHANGING XY SUBSCRIPTS.
-% post_csf     = zeros([ysize xsize zsize], 'single');
-% post_wm      = zeros([ysize xsize zsize], 'single');
-% post_gm      = zeros([ysize xsize zsize], 'single');
-% post_outlier = zeros([ysize xsize zsize], 'single');
 post_csf     = zeros([xsize ysize zsize], 'single');
 post_wm      = zeros([xsize ysize zsize], 'single');
 post_gm      = zeros([xsize ysize zsize], 'single');
@@ -29,21 +24,21 @@ for i = 1:num
         maxP = max(post(i,:));
         minP = min(post(i,:));
         
-        if ( (maxP>1) | (minP<-1) )
+        if ( (maxP > 1) | (minP < -1) )
             post(i,:)
         end
         
         post(i,:) = (post(i,:)-minP) ./ (maxP-minP);
-        post(i,:) = post(i,:) ./ sum(post(i,:));
+        post(i,:) = post(i,:)        ./ sum(post(i,:));
     end
     
     row   = mix.indexes(i, 1);
     col   = mix.indexes(i, 2);
     depth = mix.indexes(i, 3);
     
-    post_csf(row, col, depth) = post(i,1);
-    post_gm(row, col, depth)  = post(i,2);
-    post_wm(row, col, depth)  = post(i,3);
+    post_csf(row, col, depth)     = post(i,1);
+    post_gm(row, col, depth)      = post(i,2);
+    post_wm(row, col, depth)      = post(i,3);
     post_outlier(row, col, depth) = 1 - post_csf(row, col, depth) - post_gm(row, col, depth) - post_wm(row, col, depth);
 end
 
