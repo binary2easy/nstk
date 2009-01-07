@@ -81,27 +81,19 @@ options(3) = 1e-3;
 options(5) = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% [mix, options, errlog] = gmmem_image_PVs(mix, x, options);
+
 [mix, options, errlog] = gmmem_image_PVs_WM2CSF(mix, x, options);
 
 % compute the posterior probablities
 [post, a] = gmmpost_image(mix, x);
 
-% save results
-% results = zeros(size(imagedata), 'uint32');
-% [ndata, ndim] = size(mix.indexes);
-% for i = 1:ndata
-%     label = find(post(i,:) == max(post(i,:)));
-%     results(mix.indexes(i, 1), mix.indexes(i, 2), mix.indexes(i, 3)) = label(1);
-% end
-% save results
 
 prefix = 'prefix';
 
 % filename = fullfile(subjPars.resultDir, [prefix '_segResult_4classes' suffix]);
 
-results = After_gmmem_step_4classes(imagedata, header, mix, post, subjPars);%, csfLabel, cortexLabel, wmLabel, outlierLabel);
-% the above needs to return 'results'
+results = After_gmmem_step_4classes(imagedata, header, mix, post, subjPars);
+
 
 % ====================================================== %
 % detect PVs
@@ -130,9 +122,10 @@ label = [2];
 filename = fullfile(subjPars.resultDir, [ prefix '_cortex_seg' suffix]);
 saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
 
-% Same as above?
 filename = fullfile(subjPars.resultDir, [ 'cortex_seg_4classes' suffix]);
-saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
+% Previously also saved largest component. Changed to saving label3D to
+% make consistent with WM below.
+saveAnalyze(uint32(label3D), header, filename, 'Grey');
 
 
 volumeThreshold = 200;
