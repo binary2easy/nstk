@@ -26,16 +26,13 @@ xsize = header.xsize;
 ysize = header.ysize;
 zsize = header.zsize;
 
-% ndata = size(mix.priors, 1);
 for k = 1:zsize
     for j = 1:ysize
         for i = 1:xsize
 
-            % PA CHANGING XY SUBSCRIPTS.
-%             label = segResult2(j, i, k);
             label = segResult2(i, j, k);
-            % if the pixel is nonbrain or csf or background (labelled by
-            % 0), continue
+
+            % if the pixel is nonbrain or csf or background (label 0), continue
             if ( (label == 0) | (label == csflabel) | (label == nonbrainlabel) )
                 continue;
             end
@@ -47,8 +44,6 @@ for k = 1:zsize
                 % between csf and non-brain tissue
                 if ( (isempty(find(neighbors == csflabel))      == 0) && ...
                      (isempty(find(neighbors == nonbrainlabel)) == 0) )
-                    % PA CHANGING SUBSCRIPTS
-%                   LabeledSeg(j, i, k) = csflabel;
                     LabeledSeg(i, j, k) = csflabel;
                     continue;
                 end
@@ -56,8 +51,6 @@ for k = 1:zsize
                 % between csf and gm
                 if ( (isempty(find(neighbors == csflabel))    == 0) && ...
                      (isempty(find(neighbors == cortexlabel)) == 0) )
-                    % PA CHANGING SUBSCRIPTS
-%                   LabeledSeg(j, i, k) = cortexlabel;
                     LabeledSeg(i, j, k) = cortexlabel;
                     continue;
                 end
@@ -65,8 +58,6 @@ for k = 1:zsize
                 % between non-brain tissue and gm
                 if ( (isempty(find(neighbors == nonbrainlabel)) == 0) && ...
                      (isempty(find(neighbors == cortexlabel))   == 0) )
-                    % PA CHANGING SUBSCRIPTS
-%                   LabeledSeg(j, i, k) = cortexlabel;
                     LabeledSeg(i, j, k) = cortexlabel;
                     continue;
                 end
@@ -78,24 +69,18 @@ for k = 1:zsize
                 % between csf and non-brain tissue
                 if ( (isempty(find(neighbors == csflabel))      == 0) && ...
                      (isempty(find(neighbors == nonbrainlabel)) == 0) )
-                    % PA CHANGING SUBSCRIPTS
-%                   LabeledSeg(j, i, k) = csflabel;
                     LabeledSeg(i, j, k) = csflabel;
                     continue;
                 end
 
                 if ( (isempty(find(neighbors == csflabel)) == 0) && ...
                      (isempty(find(neighbors == 0))        == 0) )
-                    % PA CHANGING SUBSCRIPTS
-%                   LabeledSeg(j, i, k) = csflabel;
                     LabeledSeg(i, j, k) = csflabel;
                     continue;
                 end
 
                 if ( (isempty(find(neighbors == wmlabel)) == 0) && ...
                      (isempty(find(neighbors == 0))       == 0) )
-                    % PA CHANGING SUBSCRIPTS
-%                   LabeledSeg(j, i, k) = wmlabel;
                     LabeledSeg(i, j, k) = wmlabel;
                     continue;
                 end
