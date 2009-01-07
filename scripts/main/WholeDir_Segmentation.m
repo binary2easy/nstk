@@ -45,11 +45,6 @@ for i = 1:num
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    % These look like globals. Get rid.
-%     Global_SegResult = './result/';
-%     Local_SegResult  = './result/';
-%     KmeansDir        = './kmeans/';
-
     subjPars = struct('resultDir', '', 'kmeansDir', '', 'maskDir', '', ...
         'anatDir', '', 'brainMaskfile', '', 'imagefile', '', 'postDir', '');
     
@@ -100,15 +95,11 @@ for i = 1:num
     end    
 
     if ( fourClasses_flag )
-%         cd(subjDir);
-%         SingleImage_Segmentation_4classes_forWholeDir;
         subjPars.postDir = fullfile(subjDir, post4DirName);
         singleImageSegmentation(4, subjPars);
     end
     
     if ( fiveClasses_flag )
-%         cd(subjDir);
-%         SingleImage_Segmentation_5classes_forWholeDir;
         subjPars.postDir = fullfile(subjDir, post5DirName);
         singleImageSegmentation(5, subjPars);
     end
