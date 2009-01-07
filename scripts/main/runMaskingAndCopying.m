@@ -66,9 +66,13 @@ for i = 1:num
     
     % Mask from template propagation.
     maskCurr          = fullfile(maskDir, maskName);
+    
+    % THIS HAS BEEN RESAMPLED SO -r flag needed if we want to use it.
     maskNative        = fullfile(maskDir, [subjID '-brain_mask' suffix]);
     
     if (exist(maskNative, 'file'))
+        % WILL NEVER HAPPEN , SEE ABOVE.
+        
         % Incorporate info from native mask to modify propagated mask.
         command = [appDir '/padding "' maskCurr '" "' maskNative '" "' maskCurr '" 0 0'];
         disp(command);
