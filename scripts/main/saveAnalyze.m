@@ -47,6 +47,29 @@ if findstr('.nii', analyzename)
     end
 end
 
+% Undo the reorientation that would have been done on loading (see
+% nifti/load_nii nifti/xform_nii).
+
+rot_orient  = header.nii.hdr.hist.rot_orient;
+flip_orient = header.nii.hdr.hist.flip_orient;
+
+if (~isempty(rot_orient))
+  % Note: Inverse permutation.
+  nii.img = ipermute(nii.img, rot_orient);
+  
+  if (~isempty(flip_orient))
+    [dummy, inv_rot_orient] = sort(rot_orient);
+    flip_orient = flip_orient(inv_rot_orient);
+    
+    for i = 1:3
+      if flip_orient(i)
+        nii.img = flipdim(nii.img, i);
+      end
+    end
+  end
+end
+
+
 if (findstr('.gz',analyzename))
     % Prepare for a bit of name-mangling in save_nii
     analyzename = strrep(analyzename,'.gz','');
