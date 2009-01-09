@@ -1,6 +1,6 @@
 function run_kmeans_all(rootDir, fourClasses_flag, fiveClasses_flag)
 
-[subdirs, num] = FindAllDirectory(rootDir);
+[subdirs, num] = findAllDirectory(rootDir);
 
 maskDirName    = 'brainMask';
 anatomyDirName = 'nuCorrected';
