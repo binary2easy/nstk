@@ -67,6 +67,7 @@ header.zvoxelsize = voxelsize(4);
 
 header.bytes = double(nii.original.hdr.dime.bitpix / 8);
 
+header.nii.hdr = nii.hdr;
 header.nii.original = nii.original;
 header.nii.filetype = nii.filetype;
 header.nii.machine  = nii.machine;
