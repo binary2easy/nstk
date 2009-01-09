@@ -37,6 +37,10 @@ function [mix, options, errlog] = gmmem_image_3classes_PVs_Local(mix, x, options
 
 % Hui modified this to fit the atlas based image segmentation
 
+
+
+
+
 % Check that inputs are consistent
 errstring = consist(mix, 'gmm', x);
 if ~isempty(errstring)

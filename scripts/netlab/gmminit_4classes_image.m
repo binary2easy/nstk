@@ -188,35 +188,6 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
 %     return;
 end
 
-% % save points
-% points_data = zeros(size(atlas_csf), 'uint32');
-% pp = indexes(ll_csf(:), :);
-% 
-% num = length(pp);
-% for i = 1:num
-%     points_data(pp(i,1), pp(i,2), pp(i,3)) = 1;
-% end
-% SaveAnalyze(points_data, header, 'csfP2.hdr', 'Grey');
-% 
-% points_data = zeros(size(atlas_wm), 'uint32');
-% pp = indexes(ll_wm(:), :);
-% 
-% num = length(pp);
-% for i = 1:num
-%     points_data(pp(i,1), pp(i,2), pp(i,3)) = 1;
-% end
-% SaveAnalyze(points_data, header, 'wmP2.hdr', 'Grey');
-% 
-% points_data = zeros(size(atlas_gm), 'uint32');
-% pp = indexes(ll_gm(:), :);
-% 
-% num = length(pp);
-% for i = 1:num
-%     points_data(pp(i,1), pp(i,2), pp(i,3)) = 1;
-% end
-% SaveAnalyze(points_data, header, 'cortexP2.hdr', 'Grey');
-% % save points -- end
-
 % Arbitrary width used if variance collapses to zero: make it 'large' so
 % that centre is responsible for a reasonable number of points.
 GMM_WIDTH = 1.0;

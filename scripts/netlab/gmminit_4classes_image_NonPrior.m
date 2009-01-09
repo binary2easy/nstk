@@ -42,19 +42,7 @@ atlas_outlier(find(brainmask == 0 )) = 0;
 [i_cortex, j_cortex, k_cortex] = ind2sub(size(atlas_cortex), find(atlas_cortex > initParameters.eps));
 [i_outlier, j_outlier, k_outlier] = ind2sub(size(atlas_outlier), find(atlas_outlier > initParameters.eps));
 
-% % save points
-% points_data = zeros(size(atlas_csf), 'uint32');
-% points_data(find(atlas_csf > initParameters.eps)) = 1;
-% SaveAnalyze(points_data, header, 'csfP.hdr', 'Grey');
-% 
-% points_data = zeros(size(atlas_whitematter), 'uint32');
-% points_data(find(atlas_whitematter > initParameters.eps)) = 1;
-% SaveAnalyze(points_data, header, 'wmP.hdr', 'Grey');
-% 
-% points_data = zeros(size(atlas_cortex), 'uint32');
-% points_data(find(atlas_cortex > initParameters.eps)) = 1;
-% SaveAnalyze(points_data, header, 'cortexP.hdr', 'Grey');
-% % save points -- end
+
 
 points = union([i_csf j_csf k_csf], [i_wm j_wm k_wm], 'rows');
 points2 = union(points, [i_cortex j_cortex k_cortex], 'rows');
@@ -188,37 +176,7 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
 %     return;
 end
 
-% % save points
-% points_data = zeros(size(atlas_csf), 'uint32');
-% pp = indexes(ll_csf(:), :);
-% 
-% num = length(pp);
-% for i = 1:num
-%     points_data(pp(i,1), pp(i,2), pp(i,3)) = 1;
-% end
-% SaveAnalyze(points_data, header, 'csfP2.hdr', 'Grey');
-% 
-% points_data = zeros(size(atlas_whitematter), 'uint32');
-% pp = indexes(ll_wm(:), :);
-% 
-% num = length(pp);
-% for i = 1:num
-%     points_data(pp(i,1), pp(i,2), pp(i,3)) = 1;
-% end
-% SaveAnalyze(points_data, header, 'wmP2.hdr', 'Grey');
-% 
-% points_data = zeros(size(atlas_cortex), 'uint32');
-% pp = indexes(ll_cortex(:), :);
-% 
-% num = length(pp);
-% for i = 1:num
-%     points_data(pp(i,1), pp(i,2), pp(i,3)) = 1;
-% end
-% SaveAnalyze(points_data, header, 'cortexP2.hdr', 'Grey');
-% % save points -- end
 
-% Arbitrary width used if variance collapses to zero: make it 'large' so
-% that centre is responsible for a reasonable number of points.
 GMM_WIDTH = 1.0;
 
 switch mix.covar_type
