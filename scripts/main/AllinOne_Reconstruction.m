@@ -2,7 +2,7 @@
 disp('----------------------------------------------------');
 disp('AllinOne_Reconstruction');
 
-CopyFile_for_CortexReconstruction;
+copyFiles_cortexReconstruction; 
 
 cortex_reconstruction = 'cortex_reconstruction';
 [subdirs, num] = FindAllDirectory(home)
