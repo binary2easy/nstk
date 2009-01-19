@@ -12,23 +12,12 @@ suffix = '.nii.gz';
 noStemBrain = ['noStemBrain_N3' suffix];
 maskName    = ['brainmask_nostem' suffix];
 
-% ============================================================== %
-% Looks like a global, needed for run_kmeans.  Moved into that script 
-% and changed its name to 'replicates'.
-% TryNumber = 8;
 
 for i = 1:num
     
     subjDir = fullfile(rootDir, subdirs{i});
-    % common setting
-%     cd(subjDir);
     disp(subjDir);
 
-    % These look like globals.
-%     Global_SegResult = './result/';
-%     Local_SegResult  = './result/';
-%     KmeansDir        = './kmeans/';
-    
     pars = struct('resultDir', '', 'kmeansDir', '', 'maskDir', '', ...
         'anatDir', '', 'brainMaskfile', '', 'imagefile', '');
     
@@ -77,14 +66,12 @@ for i = 1:num
     header5classes = struct([]);
 
     if ( fourClasses_flag )
-        centresFile = fullfile(rootDir, 'Kmeans_InitialCentres_4classes.txt');
+        centresFile = fullfile(subjDir, 'kmeans/Kmeans_InitialCentres_4classes.txt');
         run_kmeans('kmeans-4classes.nii.gz', 4, centresFile, pars);
-%         kmeans4_singleImage;
     end
     
     if ( fiveClasses_flag )
-        centresFile = fullfile(rootDir, 'Kmeans_InitialCentres_5classes.txt');
+        centresFile = fullfile(rootDir, 'kmeans/Kmeans_InitialCentres_5classes.txt');
         run_kmeans('kmeans-5classes.nii.gz', 5, centresFile, pars);
-%         kmeans5_singleImage;
     end
 end
