@@ -96,12 +96,14 @@ end
 clear imagedata brainmask
 mix.indexes = [i j k];
 mix.indexes = uint32(mix.indexes);
-mix.priors = zeros(ndata, 5); % four classes
+mix.priors = zeros(ndata, 5); % five classes
+
 % mix.atlas = zeros(ysize, xsize, zsize, 4, 'single');
 % mix.classification = zeros(ysize, xsize, zsize, 5, 'single');
 % mix.playing = zeros(ysize, xsize, zsize, 'uint8');
 % mix.sampleInd = zeros(ndata, 1, 'uint32');
-mix.indexVolume = zeros([ysize xsize zsize], 'uint32');
+
+mix.indexVolume = zeros([xsize ysize zsize], 'uint32');
  
 for m=1:ndata
     mix.priors(m,:) = [atlas_csf(i(m), j(m), k(m)) atlas_cortex(i(m), j(m), k(m)) ...
@@ -188,11 +190,21 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
 %             ll_csf = find(pp>=probablity_thres);
             ll = findHighProb(pp, probablity_thres, mix.minN);
             x_csf = x(ll,:);
-
+            
             [res,raw]=fastmcd(x_csf, option);
 
             mix.centres(1,:) = res.center;
-            mix.covars(:,:,1) = res.cov;
+            if (res.cov > 0)
+              mix.covars(:,:,1) = res.cov;
+            else
+              temp = max(x_csf) - min(x_csf);
+              if (temp > 0)
+                mix.covars(:,:,1) = 0.001 * temp;
+              else
+                mix.covars(:,:,1) = 0.001;
+              end
+            end
+                         
 
             % cortex
             pp = mix.priors(:,2);
@@ -203,8 +215,17 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
             [res,raw]=fastmcd(x_cortex, option);
 
             mix.centres(2,:) = res.center;
-            mix.covars(:,:,2) = res.cov;
-
+            if (res.cov > 0)
+              mix.covars(:,:,2) = res.cov;
+            else
+              temp = max(x_cortex) - min(x_cortex);
+              if (temp > 0)
+                mix.covars(:,:,2) = 0.001 * temp;
+              else
+                mix.covars(:,:,2) = 0.001;
+              end
+            end
+            
             % whitematters1
             pp = mix.priors(:,3);
 %             ll_wm = find(pp>=probablity_thres);
@@ -214,8 +235,17 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
             [res,raw]=fastmcd(x_wm, option);
 
             mix.centres(3,:) = res.center;
-            mix.covars(:,:,3) = res.cov;
-                       
+            if (res.cov > 0)
+              mix.covars(:,:,3) = res.cov;
+            else
+              temp = max(x_wm) - min(x_wm);
+              if (temp > 0)
+                mix.covars(:,:,3) = 0.001 * temp;
+              else
+                mix.covars(:,:,3) = 0.001;
+              end
+            end
+            
             % whitematters2
             pp = mix.priors(:,4);
 %             ll_wm = find(pp>=probablity_thres);
@@ -225,7 +255,16 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
             [res,raw]=fastmcd(x_wm, option);
 
             mix.centres(4,:) = res.center;
-            mix.covars(:,:,4) = res.cov;
+            if (res.cov > 0)
+              mix.covars(:,:,4) = res.cov;
+            else
+              temp = max(x_wm) - min(x_wm);
+              if (temp > 0)
+                mix.covars(:,:,4) = 0.001 * temp;
+              else
+                mix.covars(:,:,4) = 0.001;
+              end
+            end
             
             % outlier
             pp = mix.priors(:,5);
@@ -236,8 +275,17 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
             [res,raw]=fastmcd(x_outlier, option);
 
             mix.centres(5,:) = res.center;
-            mix.covars(:,:,5) = res.cov;
-
+            if (res.cov > 0)
+              mix.covars(:,:,5) = res.cov;
+            else
+              temp = max(x_outlier) - min(x_outlier);
+              if (temp > 0)
+                mix.covars(:,:,5) = 0.001 * temp;
+              else
+                mix.covars(:,:,5) = 0.001;
+              end
+            end
+            
         case {'optimizedclustering'}
             disp('no implemeted')
 
