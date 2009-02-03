@@ -149,8 +149,17 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
             % mean and variance robustly.
             
             [res, raw] = fastmcd(x_csf, option);
-            mix.centres(1,:)  = res.center;
-            mix.covars(:,:,1) = res.cov;
+            mix.centres(1,:) = res.center;
+            if (res.cov > 0)
+              mix.covars(:,:,1) = res.cov;
+            else
+              temp = max(x_csf) - min(x_csf);
+              if (temp > 0)
+                mix.covars(:,:,1) = 0.001 * temp;
+              else
+                mix.covars(:,:,1) = 0.001;
+              end
+            end
 
             % cortex
             pp = mix.priors(:,2);
@@ -158,8 +167,17 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
             x_gm = x(ll,:);
 
             [res, raw] = fastmcd(x_gm, option);
-            mix.centres(2,:)  = res.center;
-            mix.covars(:,:,2) = res.cov;
+            mix.centres(2,:) = res.center;
+            if (res.cov > 0)
+              mix.covars(:,:,2) = res.cov;
+            else
+              temp = max(x_gm) - min(x_gm);
+              if (temp > 0)
+                mix.covars(:,:,2) = 0.001 * temp;
+              else
+                mix.covars(:,:,2) = 0.001;
+              end
+            end
 
             % white matter
             pp = mix.priors(:,3);
@@ -168,7 +186,16 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
 
             [res, raw] = fastmcd(x_wm, option);
             mix.centres(3,:) = res.center;
-            mix.covars(:,:,3) = res.cov;
+            if (res.cov > 0)
+              mix.covars(:,:,3) = res.cov;
+            else
+              temp = max(x_wm) - min(x_wm);
+              if (temp > 0)
+                mix.covars(:,:,3) = 0.001 * temp;
+              else
+                mix.covars(:,:,3) = 0.001;
+              end
+            end
             
             % outlier
             pp = mix.priors(:,4);
@@ -177,7 +204,16 @@ if ( strcmp(mix.covar_type, 'full') == 1 )
 
             [res, raw] = fastmcd(x_out, option);
             mix.centres(4,:) = res.center;
-            mix.covars(:,:,4) = res.cov;
+            if (res.cov > 0)
+              mix.covars(:,:,4) = res.cov;
+            else
+              temp = max(x_out) - min(x_out);
+              if (temp > 0)
+                mix.covars(:,:,4) = 0.001 * temp;
+              else
+                mix.covars(:,:,4) = 0.001;
+              end
+            end
             
         case {'optimizedclustering'}
             disp('no implemeted')
