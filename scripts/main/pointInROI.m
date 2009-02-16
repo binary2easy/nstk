@@ -1,10 +1,10 @@
+function inside = pointInROI(pt, minCorner, maxCorner)
 
-function inflag = pointInROI(point, leftup, rightdown)
-
-if ( (point(1)>=leftup(1)) & (point(2)>=leftup(2)) & (point(3)>=leftup(3))...
-        & (point(1)<=rightdown(1)) & (point(2)<=rightdown(2)) & (point(3)<=rightdown(3)) )
-    inflag = true;
+if ( (pt(1) >= minCorner(1)) && (pt(2) >= minCorner(2)) && (pt(3) >= minCorner(3)) && ...
+     (pt(1) <= maxCorner(1)) && (pt(2) <= maxCorner(2)) && (pt(3) <=maxCorner(3)))
+    inside = true;
 else
-    inflag = false;
+    inside = false;
 end
+
 return
