@@ -1,16 +1,18 @@
+function [roiData, roiHeader] = getROI(data, header, minCorner, maxCorner)
 
-function [ROI, headerROI]=getROI(data, header, leftup,rightdown)
+roiHeader = header;
 
-headerROI=header;
-xsize=rightdown(1)-leftup(1)+1;
-ysize=rightdown(2)-leftup(2)+1;
-zsize=rightdown(3)-leftup(3)+1;
-headerROI.xsize=xsize;
-headerROI.ysize=ysize;
-headerROI.zsize=zsize;
+xsize = maxCorner(1) - minCorner(1) + 1;
+ysize = maxCorner(2) - minCorner(2) + 1;
+zsize = maxCorner(3) - minCorner(3) + 1;
 
-ROI=zeros(headerROI.ysize, headerROI.xsize, headerROI.zsize);
+roiHeader.xsize = xsize;
+roiHeader.ysize = ysize;
+roiHeader.zsize = zsize;
 
-ROI=data(leftup(2):rightdown(2), leftup(1):rightdown(1), leftup(3):rightdown(3));
+roiData = data(minCorner(1):maxCorner(1), minCorner(2):maxCorner(2), minCorner(3):maxCorner(3));
+
+% PROBLEM: IF NON-EQUAL NOS OF ROWS/COLS/SLICES ARE DISCARDED FROM EITHER
+% END, THE ORIGIN INFORMATION IS OUT OF DATE AND NEEDS TO BE RECALCULATED.
 
 return;
