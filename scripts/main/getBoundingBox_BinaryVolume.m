@@ -1,42 +1,23 @@
-function [leftup, rightdown] = getBoundingBox_BinaryVolume(data)
+function [minCorner, maxCorner] = getBoundingBox_BinaryVolume(data)
 
-% get the bounding box of vasculature
+% Get the bounding box of non-zero voxels. Note the arbitrary expansion.
 
-[i, j, k] = ind2sub(size(data), find(data>0));
+[i, j, k] = ind2sub(size(data), find(data > 0));
 
-leftup = [min(j) min(i) min(k)];
+minCorner = [min(i) min(j) min(k)];
+maxCorner = [max(i) max(j) max(k)];
 
-rightdown = [max(j) max(i) max(k)];
+% Arbitrary expansion!
+minCorner = minCorner - 10;
+maxCorner = maxCorner + 10;
 
-leftup = leftup - 10;
+[xsize, ysize, zsize] = size(data);
 
-rightdown = rightdown + 10;
+lowerLimit = ones(size(minCorner));
+upperLimit = [xsize ysize zsize];
 
-[ysize, xsize, zsize] = size(data);
-
-if ( leftup(1)<1 )
-  leftup(1) = 1;
-end
-
-if ( leftup(2)<1 )
-  leftup(2) = 1;
-end
-
-if ( leftup(3)<1 )
-  leftup(3) = 1;
-end
-
-if ( rightdown(1)>xsize )
-  rightdown(1) = xsize;
-end
-
-if ( rightdown(2)>ysize )
-  rightdown(2) = ysize;
-end
-
-if ( rightdown(3)>zsize )
-  rightdown(3) = zsize;
-end
+minCorner = max([minCorner; lowerLimit]);
+maxCorner = min([maxCorner; upperLimit]);
 
 return;
 
