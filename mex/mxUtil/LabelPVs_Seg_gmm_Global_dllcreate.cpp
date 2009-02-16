@@ -16,8 +16,8 @@ typedef int mwSize;
 
 bool ExistLabel(unsigned int* labels, int lenOfLabels, int label)
 {
-	for ( int i=0; i<lenOfLabels; i++ )
-	{
+  int i;
+	for (i = 0; i < lenOfLabels; i++){
 		if ( labels[i] == label )
 			return true;
 	}
@@ -40,28 +40,26 @@ void GetNeighbourhood_offsets(const mxArray* SegResult, unsigned int* pSegResult
 
 	int ndim3 = 3;
 
-// 	unsigned int subs3[3];
 	mwIndex subs3[3];
 
 	int ind;
+	int tt;
 
-	for ( int tt=0; tt<lenOfOffset; tt++ )
-	{
+	for (tt = 0; tt < lenOfOffset; ++tt){
 
 		px = x + offsetX[tt];
 		py = y + offsetY[tt];
 		pz = z + offsetZ[tt];
 
-		if ( (px>0) && (px<=xsize) && (py>0) && (py<=ysize) && (pz>0) && (pz<=zsize))
-		{
-			subs3[0] = px-1; // row
-			subs3[1] = py-1; // col
-			subs3[2] = pz-1; // depth
+		if ((px > 0) && (px <= xsize) && (py > 0) && (py <= ysize) && (pz > 0) && (pz <= zsize)){
+			subs3[0] = px - 1; // row
+			subs3[1] = py - 1; // col
+			subs3[2] = pz - 1; // depth
 
       ind = mxCalcSingleSubscript(SegResult, ndim3, subs3);
 			neighbors[lenOfNeighbors] = pSegResult[ind];
 
-			lenOfNeighbors = lenOfNeighbors + 1;
+			++lenOfNeighbors;
 		}
 	}
 
@@ -300,8 +298,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 	}
 
 	// for every voxel
-	for (pp=0; pp<N; pp++ )
-	{
+	for (pp = 0; pp < N; ++pp){
 		// --------------------------------------------- //
 		//j = mix.indexes(pp, 1);
 		//i = mix.indexes(pp, 2);
@@ -309,13 +306,16 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 		subs[0] = pp; // row
 		subs[1] = 0; // col
+
+		// prhs[1] = indexes in the form of a mxArray
+
 		ind = mxCalcSingleSubscript(prhs[1], ndim, subs);
 		i = pIndexes[ind];
 
 		subs[0] = pp; // row
 		subs[1] = 1; // col
 		ind = mxCalcSingleSubscript(prhs[1], ndim, subs);
-                j = pIndexes[ind];
+		j = pIndexes[ind];
 
 		subs[0] = pp; // row
 		subs[1] = 2; // col
@@ -323,12 +323,12 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		k = pIndexes[ind];
 		// --------------------------------------------- //
 
-		// label = segResult(j, i, k);
+		subs3[0] = i - 1; // row
+		subs3[1] = j - 1; // col
+		subs3[2] = k - 1; // depth
 
-		// PA CHANGING XY INDICES
-		subs3[0] = i-1; // row
-		subs3[1] = j-1; // col
-		subs3[2] = k-1; // depth
+		// prhs[2] a.k.a segResult
+
 		ind = mxCalcSingleSubscript(prhs[2], ndim3, subs3);
 		label = pSegResult[ind];
 
@@ -348,7 +348,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		subs[0] = pp; // row
 		subs[1] = 0; // col
 		ind = mxCalcSingleSubscript(prhs[0], ndim, subs);
-
 		priorCSF = pPriors[ind];
 
 		subs[0] = pp; // row
@@ -390,81 +389,77 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 		processed = false;
 
-		if ( (label == wmlabel) && !processed)
-		{
-			// between csf and non-brain tissue
-			if ( hasCSF && hasNonbrain && !processed)
-			{
+		if ( (label == wmlabel) && !processed){
+
+		  // between CSF and non-brain tissue
+			if ( hasCSF && hasNonbrain && !processed){
+
 				priorCortex = priorCortex*lamda;
 
 				priorWM = priorWM*lamda;
 
-				if ( !fourClasses )
-				{
-                                  priorWM1 = priorWM1*lamda;
-
+				if ( !fourClasses ){
+				  priorWM1 = priorWM1*lamda;
 					priorWM2 = priorWM2*lamda;
 				}
 
-				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
+				temp = 1 - (priorCSF + priorCortex + priorWM + priorNonbrain);
 				priorCSF = priorCSF + temp;
 				processed = true;
 			}
 
-			// between csf and gm
-			if ( hasCSF && hasCortex && !processed)
-			{
-				priorWM = priorWM*lamda;
+			// between CSF and GM
+			if ( hasCSF && hasCortex && !processed){
 
-                                if ( !fourClasses )
-				{
+			  priorWM = priorWM*lamda;
+
+			  if ( !fourClasses ){
 					priorWM1 = priorWM1*lamda;
 					priorWM2 = priorWM2*lamda;
 				}
 
-				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
+				temp = 1 - (priorCSF + priorCortex + priorWM + priorNonbrain);
 
-				csfNew    = priorCSF + temp * priorCSF / (priorCSF+priorCortex+eps);
-				cortexNew = priorCortex + temp * priorCortex / (priorCSF+priorCortex+eps);
+				csfNew    = priorCSF + temp * priorCSF / (priorCSF + priorCortex + eps);
+				cortexNew = priorCortex + temp * priorCortex / (priorCSF + priorCortex + eps);
 
 				priorCSF    = csfNew;
 				priorCortex = cortexNew;
 				processed = true;
 			}
 
-			// between non-brain tissue and gm
-			if ( hasCortex && hasNonbrain && !processed)
-			{
+			// between non-brain tissue and GM
+			if ( hasCortex && hasNonbrain && !processed){
+
 				priorWM = priorWM*lamda;
 
-                                if ( !fourClasses )
-				{
+				if ( !fourClasses ){
 					priorWM1 = priorWM1*lamda;
 					priorWM2 = priorWM2*lamda;
 				}
 
-				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
+				temp = 1 - (priorCSF + priorCortex + priorWM + priorNonbrain);
 
-                                csfNew    = priorCSF + temp * priorCSF / (priorCSF+priorCortex+eps);
-				cortexNew = priorCortex + temp * priorCortex / (priorCSF+priorCortex+eps);
+				csfNew    = priorCSF + temp * priorCSF / (priorCSF + priorCortex + eps);
+				cortexNew = priorCortex + temp * priorCortex / (priorCSF + priorCortex + eps);
 
 				priorCSF    = csfNew;
 				priorCortex = cortexNew;
 				processed = true;
 			}
 
-      if (processed)
-			{
-				subs3[0] = i-1; // row
-				subs3[1] = j-1; // col
-				subs3[2] = k-1; // depth
+      if (processed){
+
+				subs3[0] = i - 1; // row
+				subs3[1] = j - 1; // col
+				subs3[2] = k - 1; // depth
+
 				ind = mxCalcSingleSubscript(LabelSeg, ndim3, subs3);
 				pLabelSeg[ind] = pvlabel;
 
 				subs[0] = pp; // row
 				subs[1] = 0; // col
 				ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
-
 				pOutPutPriors[ind]= priorCSF;
 
 				subs[0] = pp; // row
@@ -472,9 +467,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 				pOutPutPriors[ind] = priorCortex;
 
-				if ( fourClasses )
-				{
-					subs[0] = pp; // row
+				if (fourClasses){
+
+				  subs[0] = pp; // row
 					subs[1] = 2; // col
 					ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 					pOutPutPriors[ind] = priorWM;
@@ -483,10 +478,10 @@ void mexFunction( int nlhs, mxArray *plhs[],
 					subs[1] = 3; // col
 					ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 					pOutPutPriors[ind] = priorNonbrain;
-				}
-				else
-				{
-					subs[0] = pp; // row
+
+				}	else {
+
+				  subs[0] = pp; // row
 					subs[1] = 2; // col
 					ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 					pOutPutPriors[ind] = priorWM1;
@@ -499,7 +494,6 @@ void mexFunction( int nlhs, mxArray *plhs[],
 					subs[0] = pp; // row
 					subs[1] = 4; // col
 					ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
-
 					pOutPutPriors[ind] = priorNonbrain;
 				}
 			}
@@ -507,52 +501,49 @@ void mexFunction( int nlhs, mxArray *plhs[],
 
 		if ( (label == cortexlabel) && !processed)
 		{
-			// between csf and non-brain tissue
-			if ( hasCSF && hasNonbrain && !processed)
-			{
-				priorCortex = priorCortex*lamda;
+			// between CSF and non-brain tissue
+			if ( hasCSF && hasNonbrain && !processed){
 
-				priorWM = priorWM*lamda;
+				priorCortex = priorCortex * lamda;
+				priorWM     = priorWM * lamda;
 
-				if ( !fourClasses )
-				{
+				if ( !fourClasses ){
 					priorWM1 = priorWM1*lamda;
 					priorWM2 = priorWM2*lamda;
 				}
 
-				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
+				temp = 1 - (priorCSF + priorCortex + priorWM + priorNonbrain);
 
 				priorCSF = priorCSF + temp;
   			processed = true;
 			}
 
-                        // between csf and 0
-			if ( hasCSF && (label == 0) && !processed)
-			{
-				priorCortex = priorCortex*lamda;
+			// between CSF and 0
+			if ( hasCSF && (label == 0) && !processed){
+				priorCortex = priorCortex * lamda;
 
-				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
-
-				priorCSF = priorCSF + temp;
-				processed = true;
-			}
-
-			// between wm and 0
-			if ( hasWM && (label == 0) && !processed)
-			{
-				priorCortex = priorCortex*lamda;
-
-				temp = 1 - (priorCSF+priorCortex+priorWM+priorNonbrain);
+				temp = 1 - (priorCSF + priorCortex + priorWM + priorNonbrain);
 
 				priorCSF = priorCSF + temp;
 				processed = true;
 			}
 
-			if (processed)
-			{
-                          subs3[0] = i-1; // row
-				subs3[1] = j-1; // col
-				subs3[2] = k-1; // depth
+			// between WM and 0
+			if ( hasWM && (label == 0) && !processed){
+
+				priorCortex = priorCortex * lamda;
+
+				temp = 1 - (priorCSF + priorCortex + priorWM + priorNonbrain);
+
+				priorCSF = priorCSF + temp;
+				processed = true;
+			}
+
+			if (processed){
+
+			  subs3[0] = i - 1; // row
+				subs3[1] = j - 1; // col
+				subs3[2] = k - 1; // depth
 				ind = mxCalcSingleSubscript(LabelSeg, ndim3, subs3);
 				pLabelSeg[ind] = pvlabel;
 
@@ -566,9 +557,9 @@ void mexFunction( int nlhs, mxArray *plhs[],
 				ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 				pOutPutPriors[ind] = priorCortex;
 
-				if ( fourClasses )
-				{
-					subs[0] = pp; // row
+				if ( fourClasses ){
+
+				  subs[0] = pp; // row
 					subs[1] = 2; // col
 					ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 					pOutPutPriors[ind] = priorWM;
@@ -577,9 +568,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 					subs[1] = 3; // col
 					ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
 					pOutPutPriors[ind] = priorNonbrain;
-				}
-				else
-				{
+				}	else {
 					subs[0] = pp; // row
 					subs[1] = 2; // col
 					ind = mxCalcSingleSubscript(plhs[1], ndim, subs);
@@ -598,6 +587,8 @@ void mexFunction( int nlhs, mxArray *plhs[],
 			}
 		}
 	}
+
 	return;
+
 }
 
