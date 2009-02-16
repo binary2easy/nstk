@@ -54,7 +54,7 @@ for i = 1:num
     files = dir(dirString);
     if ((numel(files) == 0) || (numel(files) > 1))
         disp('run_kmeans_all.m : ');
-        disp(['Zero or multiple no-stem anatomy images in ' anatDir]);
+        disp(['Zero or multiple no-stem anatomy images in ' pars.anatDir]);
         error('');
     end
     
@@ -71,7 +71,7 @@ for i = 1:num
     end
     
     if ( fiveClasses_flag )
-        centresFile = fullfile(rootDir, 'kmeans/Kmeans_InitialCentres_5classes.txt');
+        centresFile = fullfile(subjDir, 'kmeans/Kmeans_InitialCentres_5classes.txt');
         run_kmeans('kmeans-5classes.nii.gz', 5, centresFile, pars);
     end
 end
