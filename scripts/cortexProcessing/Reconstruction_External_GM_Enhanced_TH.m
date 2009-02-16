@@ -1,5 +1,5 @@
+function Reconstruction_External_GM_Enhanced_TH()
 
-% Reconstruction_External_GM_Enhanced
 filename=[prefix  '_levelset_Result_TH.hdr'];
 p=dir(filename);
 if ( isempty(p)==1 )

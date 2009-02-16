@@ -1,5 +1,4 @@
-
-% InternalSurfaces_NoTopologyPreserving
+function InternalSurfaces_NoTopologyPreserving()
 
 filename=[prefix  '_levelset_Result.hdr'];
 p=dir(filename);

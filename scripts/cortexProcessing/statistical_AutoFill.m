@@ -61,14 +61,15 @@ for k = 2:zsize-1
   for j = 2:ysize-1
     for i = 2:xsize-1
 
-      label = data(j, i, k);
-      neighbourhood = GetNeighbourhood(data, header, i, j, k, 3);
+      label = data(i, j, k);
+      neighbourhood = getNeighbourhood(data, header, i, j, k, 3);
       
-      numLabel = length(find(neighbourhood==label));
+      numLabel = length(find(neighbourhood == label));
       
       if ( numLabel <= thresh )
-        data_noholes(j, i, k) = 1 - label;
+        data_noholes(i, j, k) = 1 - label;
       end
+      
     end
   end
 end

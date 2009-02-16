@@ -1,130 +1,145 @@
+%%
 
-% Prepare_Cortex_Reconstruction
+function Prepare_Cortex_Reconstruction(subjDir, noOfClasses)
+
+disp('Prepare_Cortex_Reconstruction')
+disp(subjDir);
+
+suffix = '.nii.gz';
+
+strNoClasses = num2str(noOfClasses);
+postDir = ['post' strNoClasses];
+
+filename = fullfile(subjDir, postDir, ['wm_seg_roi_noholes' suffix]);
+
+if (exist(filename, 'file'))
+  return;
+end
+
+
+% p=dir(filename);
+% 
+% if ( isempty(p) == 1 ) 
+% 
+%     if ( isempty(dir('offsets.mat')) )
+        %csf_seg_filename = 'csf_seg.hdr';
+
+% Determine ROI using CSF segmentation.
+csf_seg_filename = ['csf_seg_' strNoClasses 'classes.nii.gz'];
+csf_seg_filename = fullfile(subjDir, 'result', csf_seg_filename);
+        
+[data, header] = loadAnalyze(csf_seg_filename, 'Grey');
+[minCorner, maxCorner] = getBoundingBox_BinaryVolume(data);
+
+disp(['Bounds used : ' num2str(minCorner) ' to ' num2str(maxCorner)]);
+
+% Apply to the other images.
+
+% WMls 
+inputName  = ['wm_seg_' strNoClasses 'classes.nii.gz'];
+inputName  = fullfile(subjDir, 'result', inputName);
+outputName = ['wm_seg_' strNoClasses 'classes_roi.nii.gz'];
+outputName = fullfile(subjDir, 'result', outputName);
+type = 'Grey';
+
+applyROI(inputName, outputName, minCorner, maxCorner, type);
+
+
+% WM REAL
+inputName  = ['post_wm_Real.nii.gz'];
+inputName  = fullfile(subjDir, postDir, inputName);
+outputName = ['wm_membership_roi.nii.gz'];
+outputName = fullfile(subjDir, postDir, outputName);
+type = 'Real';
+
+applyROI(inputName, outputName, minCorner, maxCorner, type);
+
+% GM REAL
+inputName  = ['post_gm_Real.nii.gz'];
+inputName  = fullfile(subjDir, postDir, inputName);
+outputName = ['gm_membership_roi.nii.gz'];
+outputName = fullfile(subjDir, postDir, outputName);
+type = 'Real';
+
+applyROI(inputName, outputName, minCorner, maxCorner, type);
+
+
+% CSF REAL
+
+inputName  = ['post_csf_Real.nii.gz'];
+inputName  = fullfile(subjDir, postDir, inputName);
+outputName = ['csf_membership_roi.nii.gz'];
+outputName = fullfile(subjDir, postDir, outputName);
+type = 'Real';
+
+applyROI(inputName, outputName, minCorner, maxCorner, type);
+
+
+% Brain with stem.
+inputName  = ['withStemBrain_N3.nii.gz'];
+inputName  = fullfile(subjDir, 'nuCorrected', inputName);
+outputName = ['N3Brain_roi.nii.gz'];
+outputName = fullfile(subjDir, 'nuCorrected', outputName);
+type = 'Grey';
+
+applyROI(inputName, outputName, minCorner, maxCorner, type);
+
+% Brain mask.
+inputName  = ['brainmask_nostem.nii.gz'];
+inputName  = fullfile(subjDir, 'brainMask', inputName);
+outputName = ['brainmask_nostem_roi.nii.gz'];
+outputName = fullfile(subjDir, 'brainMask', outputName);
+type = 'Grey';
+
+applyROI(inputName, outputName, minCorner, maxCorner, type);
+
+% Segmentation result.
+inputName  = ['segResult_' strNoClasses 'classes.nii.gz'];
+inputName  = fullfile(subjDir, 'result', inputName);
+outputName = ['segResult_' strNoClasses 'classes_roi.nii.gz'];
+outputName = fullfile(subjDir, 'result', outputName);
+type = 'Grey';
+
+applyROI(inputName, outputName, minCorner, maxCorner, type);
+
+% ??? PA.
+% save offsets minCorner maxCorner extraWidth
 
 % ====================================================================== %
-% load binary volume of white matter
 
-% get the maximal region of interest
-% filename = 'csf_seg.hdr';
-% [data, header] = LoadAnalyze(filename, 'Grey');
-% [leftup, rightdown] = getBoundingBox_BinaryVolume(data);
-% 
-% leftup
-% rightdown
-% 
-% extraWidth = 4;
-% 
-% filename = 'wm_seg.hdr';
-% [data, header] = LoadAnalyze(filename, 'Grey');
-% [ROI, headerROI]=getROI(data, header, leftup,rightdown);
-% [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-% SaveAnalyze(uint32(ROI), headerROI, 'wm_seg_roi.hdr', 'Grey');
-% 
-% filename = 'post_wm_Real.hdr';
-% [wm_membership, header] = LoadAnalyze(filename, 'Real');
-% [ROI, headerROI]=getROI(wm_membership, header, leftup,rightdown);
-% [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-% SaveAnalyze(ROI, headerROI, 'wm_membership_roi.hdr', 'Real');
-% SaveAnalyze(2048*ROI, headerROI, 'wm_membership_roi_rview.hdr', 'Real');
-% 
-% filename = 'post_gm_Real.hdr';
-% [gm_membership, header] = LoadAnalyze(filename, 'Real');
-% [ROI, headerROI]=getROI(gm_membership, header, leftup,rightdown);
-% [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-% SaveAnalyze(ROI, headerROI, 'gm_membership_roi.hdr', 'Real');
-% SaveAnalyze(2048*ROI, headerROI, 'gm_membership_roi_rview.hdr', 'Real');
-% 
-% filename = 'post_csf_Real.hdr';
-% [csf_membership, header] = LoadAnalyze(filename, 'Real');
-% [ROI, headerROI]=getROI(csf_membership, header, leftup,rightdown);
-% [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-% SaveAnalyze(ROI, headerROI, 'csf_membership_roi.hdr', 'Real');
-% SaveAnalyze(2048*ROI, headerROI, 'csf_membership_roi_rview.hdr', 'Real');
-% 
-% filename = 'withStemBrain_N3.hdr';
-% [data, header] = LoadAnalyze(filename, 'Grey');
-% [ROI, headerROI]=getROI(data, header, leftup,rightdown);
-% [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-% SaveAnalyze(uint32(ROI), headerROI, 'N3Brain_roi.hdr', 'Grey');
+inputName  = ['wm_seg_' strNoClasses 'classes_roi.nii.gz'];
+inputName  = fullfile(subjDir, 'result', inputName);
+outputName = ['wm_seg_' strNoClasses 'classes_roi_noholes.hdr'];
+outputName = fullfile(subjDir, 'result', outputName);
 
-% csf_seg_filename
-% wm_seg_filename
-% post_wm_Real_filename
-% post_gm_Real_filename
-% post_csf_Real_filename
-% Brainfilename
-
-filename='wm_seg_roi_noholes.hdr';
-p=dir(filename);
-if ( isempty(p) == 1 ) 
-
-    if ( isempty(dir('offsets.mat')) )
-        %csf_seg_filename = 'csf_seg.hdr';
-        [data, header] = LoadAnalyze(csf_seg_filename, 'Grey');
-        [leftup, rightdown] = getBoundingBox_BinaryVolume(data);
-
-        leftup
-        rightdown
-
-        extraWidth = 4;
-
-        % wm_seg_filename = 'wm_seg.hdr';
-        [data, header] = LoadAnalyze(wm_seg_filename, 'Grey');
-        [ROI, headerROI]=getROI(data, header, leftup,rightdown);
-        [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-        SaveAnalyze(uint32(ROI), headerROI, 'wm_seg_roi.hdr', 'Grey');
-
-        % post_wm_Real_filename = 'post_wm_Real.hdr';
-        [wm_membership, header] = LoadAnalyze(post_wm_Real_filename, 'Real');
-        [ROI, headerROI]=getROI(wm_membership, header, leftup,rightdown);
-        [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-        SaveAnalyze(ROI, headerROI, 'wm_membership_roi.hdr', 'Real');
-        SaveAnalyze(2048*ROI, headerROI, 'wm_membership_roi_rview.hdr', 'Real');
-
-        % post_gm_Real_filename = 'post_gm_Real.hdr';
-        [gm_membership, header] = LoadAnalyze(post_gm_Real_filename, 'Real');
-        [ROI, headerROI]=getROI(gm_membership, header, leftup,rightdown);
-        [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-        SaveAnalyze(ROI, headerROI, 'gm_membership_roi.hdr', 'Real');
-        SaveAnalyze(2048*ROI, headerROI, 'gm_membership_roi_rview.hdr', 'Real');
-
-        % post_csf_Real_filename = 'post_csf_Real.hdr';
-        [csf_membership, header] = LoadAnalyze(post_csf_Real_filename, 'Real');
-        [ROI, headerROI]=getROI(csf_membership, header, leftup,rightdown);
-        [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-        SaveAnalyze(ROI, headerROI, 'csf_membership_roi.hdr', 'Real');
-        SaveAnalyze(2048*ROI, headerROI, 'csf_membership_roi_rview.hdr', 'Real');
-
-        % Brainfilename = 'withStemBrain_N3.hdr';
-        [data, header] = LoadAnalyze(Brainfilename, 'Grey');
-        [ROI, headerROI]=getROI(data, header, leftup,rightdown);
-        [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-        SaveAnalyze(uint32(ROI), headerROI, 'N3Brain_roi.hdr', 'Grey');
-
-        [data, header] = LoadAnalyze('brainmask_nostem.hdr', 'Grey');
-        [ROI, headerROI]=getROI(data, header, leftup,rightdown);
-        [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-        SaveAnalyze(uint32(ROI), headerROI, 'brainmask_nostem_roi.hdr', 'Grey');
-
-        [data, header] = LoadAnalyze('segResult.hdr', 'Grey');
-        [ROI, headerROI]=getROI(data, header, leftup,rightdown);
-        [ROI, headerROI] = AddExtraWidth(ROI, headerROI, extraWidth);
-        SaveAnalyze(uint32(ROI), headerROI, 'segResult_roi.hdr', 'Grey');
-
-        save offsets leftup rightdown extraWidth
-    end
-    % ====================================================================== %
-
-    filename = 'wm_seg_roi.hdr';
-    [data, header] = LoadAnalyze(filename, 'Grey');
-
-    filename = 'wm_seg_roi_noholes.hdr';
-    p = dir(filename);
-    if ( isempty(p) == 1 ) 
-        numStep = 3;
-        threshold = 2/3;
-        data_noholes = Statistical_AutoFill(data, header, numStep, threshold);
-        SaveAnalyze(data_noholes, header, 'wm_seg_roi_noholes.hdr', 'Grey');
-    end
-
+if (exist(outputName, 'file'))
+  return;
 end
+
+[data, header] = loadAnalyze(inputName, 'Grey');
+
+numSteps  = 3;
+threshold = 2/3;
+
+data_noholes = statistical_AutoFill(data, header, numSteps, threshold);
+saveAnalyze(data_noholes, header, outputName, 'Grey');
+
+return
+
+%%
+
+function     applyROI(inputName, outputName, minCorner, maxCorner, type)
+
+extraWidth = 4;
+
+[data, header] = loadAnalyze(inputName, type);
+[roiData, roiHeader] = getROI(data, header, minCorner,maxCorner);
+[roiData, roiHeader] = AddExtraWidth(roiData, roiHeader, extraWidth);
+
+if (strcmp(type, 'Grey'))
+  saveAnalyze(uint32(roiData), roiHeader, outputName, type);
+else
+  saveAnalyze(roiData, roiHeader, outputName, type);
+end
+
+return

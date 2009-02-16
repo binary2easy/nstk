@@ -1,9 +1,12 @@
-        % -----------------------------------------------------------------
-        % cortex reconstruction
-        Prepare_membershipFunction
-        % -----------------------------------------------------------------
-        Prepare_Cortex_Reconstruction
-        % perpare data for reconstruction
+function Cortex_Reconstruction_WholePipeline_AllRun(subjDir, noOfClasses)
+
+if (noOfClasses == 5)
+  Prepare_membershipFunction(subjDir)
+end
+
+Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
+
+% perpare data for reconstruction
 %         runflag = 0;
 %         filename = 'enhanced_gm_membership.hdr';
 %         if ( isempty(dir(filename))==1 )

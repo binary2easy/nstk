@@ -1,5 +1,6 @@
+function GM_Enhancement_Cruise()
 
-% GM_Enhancement_Cruise
+
 filename = 'enhanced_gm_membership.hdr';
 p = dir(filename);
 if ( isempty(p) == 1 )
