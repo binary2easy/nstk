@@ -25,8 +25,20 @@ zsize = mix.header.zsize;
 
 % THE FOLLOWING DLL NEEDS REBUILDING.  ENSURE OUTPUT AND INPUT HAVE THE
 % SAME DIMENSIONS.
-[LabeledSeg, Priors] = LabelPVs_Seg_gmm_Global_MEX(single(mix.priors), mix.indexes, segResult, neighborNum, lamda,...
-    xsize, ysize, zsize, csflabel, wmlabel, cortexlabel, pvlabel, nonbrainlabel);
+% FAIRLY SURE THIS DLL CALL WILL NOT WORK IF 26 NEIGHBOUR CONNECTIVITY IS
+% REQUIRED.  SEE MEX C++ CODE.
+[LabeledSeg, Priors] = LabelPVs_Seg_gmm_Global_MEX(...
+  single(mix.priors), ...  % 0 (argument index when in c++ code.
+  mix.indexes, ...         % 1
+  segResult, ...           % 2
+  neighborNum, ...         % 3
+  lamda,...                % 4
+  xsize, ysize, zsize, ... % 5-7
+  csflabel, ...            % 8
+  wmlabel, ...             % 9 NB this can be an array with one or two elements.
+  cortexlabel, ...         % 10
+  pvlabel, ...             % 11
+  nonbrainlabel);          % 12
 
 mix.priors = Priors;
 index = find(LabeledSeg==pvlabel);
