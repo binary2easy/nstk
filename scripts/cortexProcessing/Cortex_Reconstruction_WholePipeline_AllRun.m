@@ -4,7 +4,8 @@ if (noOfClasses == 5)
   Prepare_membershipFunction(subjDir)
 end
 
-Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
+% Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
+
 
 % perpare data for reconstruction
 %         runflag = 0;
@@ -57,7 +58,7 @@ Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
         factorCFL = 0.5;
         reInitialStep = 0.25
 
-        InternalSurfaces_NoTopologyPreserving
+        InternalSurfaces_NoTopologyPreserving(subjDir)
 
         % -----------------------------------------------------------------
         % GM Enhancement
