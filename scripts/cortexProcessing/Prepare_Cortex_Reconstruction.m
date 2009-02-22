@@ -31,6 +31,14 @@ csf_seg_filename = fullfile(subjDir, 'result', csf_seg_filename);
 [data, header] = loadAnalyze(csf_seg_filename, 'Grey');
 [minCorner, maxCorner] = getBoundingBox_BinaryVolume(data);
 
+%  Make bounds symmetrical. Currently, getROI.m can only handle symmetrical
+%  ROIs within the image volume.
+dims = header.nii.hdr.dime.dim(2:4);
+a = dims - maxCorner + 1;
+b = minCorner;
+minCorner = min([a ; b]);
+maxCorner = dims - minCorner + 1;
+
 disp(['Bounds used : ' num2str(minCorner) ' to ' num2str(maxCorner)]);
 
 % Apply to the other images.
