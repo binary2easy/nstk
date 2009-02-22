@@ -1,5 +1,5 @@
 
-function [bigData, bigHeader] = addExtraWidth(data, header, extraWidth)
+function [bigData, newHeader] = addExtraWidth(data, header, extraWidth)
 
 % Add some zeros at each boundary to prevent the errors
 
@@ -21,16 +21,34 @@ zrange = startRange:zsize+extraWidth;
 
 bigData(xrange, yrange, zrange) = data;
 
-bigHeader = header;
+newHeader = header;
 
-bigHeader.xsize = new_xsize;
-bigHeader.ysize = new_ysize;
-bigHeader.zsize = new_zsize;
+newHeader.xsize = new_xsize;
+newHeader.ysize = new_ysize;
+newHeader.zsize = new_zsize;
 
 newdims = [new_xsize new_ysize new_zsize];
 
-bigHeader.nii.hdr.dime.dim(2:4) = newdims;
-bigHeader.nii.original.hdr.dime.dim(2:4) = newdims;
+newHeader.nii.hdr.dime.dim(2:4) = newdims;
+newHeader.nii.original.hdr.dime.dim(2:4) = newdims;
+
+
+qoff_x = newHeader.nii.hdr.hist.qoffset_x;
+qoff_y = newHeader.nii.hdr.hist.qoffset_y;
+qoff_z = newHeader.nii.hdr.hist.qoffset_z;
+
+qoff_x = qoff_x + 0.5 * (header.xsize - newHeader.xsize) * header.xvoxelsize;
+qoff_y = qoff_y + 0.5 * (header.ysize - newHeader.ysize) * header.yvoxelsize;
+qoff_z = qoff_z + 0.5 * (header.zsize - newHeader.zsize) * header.zvoxelsize;
+
+newHeader.nii.original.hdr.hist.qoffset_x = qoff_x;
+newHeader.nii.original.hdr.hist.qoffset_y = qoff_y;
+newHeader.nii.original.hdr.hist.qoffset_z = qoff_z;
+
+newHeader.nii.hdr.hist.qoffset_x = qoff_x;
+newHeader.nii.hdr.hist.qoffset_y = qoff_y;
+newHeader.nii.hdr.hist.qoffset_z = qoff_z;
+
 
 return;
 
