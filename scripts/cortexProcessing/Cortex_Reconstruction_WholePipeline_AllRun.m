@@ -58,7 +58,7 @@ end
         factorCFL = 0.5;
         reInitialStep = 0.25
 
-        InternalSurfaces_NoTopologyPreserving(subjDir)
+        InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses)
 
         % -----------------------------------------------------------------
         % GM Enhancement
