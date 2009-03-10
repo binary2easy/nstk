@@ -4,9 +4,9 @@ function [kmeansLabels, kmeansHeader] = run_kmeans(outputLabelsName, noOfClasses
 
 filename = fullfile(pars.resultDir, outputLabelsName);
 if exist(filename, 'file');
-%     disp(['Loading the kmeans results from file ' filename]);
+     disp(['File present: ' filename]);
 %     [kmeansLabels, kmeansHeader] = loadAnalyze(filename, 'Grey');
-%     return;
+    return;
 end
 
 % Replaced a variable called TryNumber:
