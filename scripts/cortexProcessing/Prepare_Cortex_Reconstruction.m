@@ -117,7 +117,7 @@ applyROI(inputName, outputName, minCorner, maxCorner, type);
 
 inputName  = ['wm_seg_' strNoClasses 'classes_roi.nii.gz'];
 inputName  = fullfile(subjDir, 'result', inputName);
-outputName = ['wm_seg_' strNoClasses 'classes_roi_noholes.hdr'];
+outputName = ['wm_seg_' strNoClasses 'classes_roi_noholes.nii.gz'];
 outputName = fullfile(subjDir, 'result', outputName);
 
 if (exist(outputName, 'file'))
@@ -142,7 +142,7 @@ extraWidth = 4;
 
 [data, header] = loadAnalyze(inputName, type);
 [roiData, roiHeader] = getROI(data, header, minCorner,maxCorner);
-[roiData, roiHeader] = AddExtraWidth(roiData, roiHeader, extraWidth);
+[roiData, roiHeader] = addExtraWidth(roiData, roiHeader, extraWidth);
 
 if (strcmp(type, 'Grey'))
   saveAnalyze(uint32(roiData), roiHeader, outputName, type);
