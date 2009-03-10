@@ -11,7 +11,7 @@ for i = 1:ndata
     results(mix.indexes(i, 1), mix.indexes(i, 2), mix.indexes(i, 3)) = label(1);
 end
 
-%% DISCREPANCY WITH LABELS USED PRIOR TO THIS POINT?? SEE 4 CLASS VERSION.
+%%% DISCREPANCY WITH LABELS USED PRIOR TO THIS POINT?? SEE 4 CLASS VERSION.
 csflabel      = 1;
 cortexlabel   = 2;
 wmlabel       = [3 4];
@@ -51,6 +51,7 @@ filename = fullfile(subjPars.postDir, ['post_outlier' suffix]);
 saveAnalyze(uint32(post_outlier), header, filename, 'Grey' );
 
 filename = fullfile(subjPars.postDir, ['post_csf' suffix]);
+% ?? why are the PV labels being saved here?
 saveAnalyze(uint32(LabelPVs_Image), header, filename, 'Grey' );
 
 
