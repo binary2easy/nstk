@@ -5,6 +5,9 @@ if (noOfClasses == 5)
 end
 
 % Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
+disp('Cortex_Reconstruction_WholePipeline_AllRun');
+disp(subjDir);
+disp(['No of Classes : ' num2str(noOfClasses)]);
 
 
 % perpare data for reconstruction
@@ -56,9 +59,9 @@ end
         flag_outside = 0; % target surface must be outside the data0 surface
         flag_inside = 0; % target surface must be inside the data0 surface
         factorCFL = 0.5;
-        reInitialStep = 0.25
+        reInitialStep = 0.25;
 
-        InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses)
+        InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses);
 
         % -----------------------------------------------------------------
         % GM Enhancement
