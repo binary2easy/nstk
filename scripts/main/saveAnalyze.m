@@ -1,5 +1,7 @@
 function saveAnalyze(data, header, analyzename, realORgrey)
-
+%
+% saveAnalyze(data, header, analyzename, realORgrey)
+%
 % saveAnalyze, save data and headr as an analyze file(.hdr)
 % input: data, header, name of analyze file, label of Grey image('Grey') or Real image('Real')
 % output: 0 normal 1 failed
