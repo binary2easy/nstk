@@ -13,7 +13,7 @@ OPTION(BUILD_SHARED_LIBS "Build shared libraries." On)
 OPTION(BUILD_SHARED "Build shared library" On)
 
 # G:/programs/MATLAB/R2008a/extern
-SET(MATLAB_DIRECTORY /usr/lib/matlab/
+SET(MATLAB_DIRECTORY /usr/local/matlab/
    CACHE STRING "Where the MATLAB is installed")
 
 INCLUDE_DIRECTORIES(${MATLAB_DIRECTORY}/extern/include)
@@ -31,31 +31,31 @@ LINK_LIBRARIES(mx mex mat)
 INCLUDE_DIRECTORIES( ${mexCompiler_SOURCE_DIR}/include)
 
 # # first to find VTK
-# FIND_PACKAGE(VTK)
+FIND_PACKAGE(VTK)
 
-# # Add VTK
-# INCLUDE(${CMAKE_ROOT}/Modules/FindVTK.cmake)
+# Add VTK
+INCLUDE(${CMAKE_ROOT}/Modules/FindVTK.cmake)
 
-# IF (VTK_FOUND)
-#   ADD_DEFINITIONS(-DHAS_VTK)
+IF (VTK_FOUND)
+  ADD_DEFINITIONS(-DHAS_VTK)
 
-#   INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS})
-#   LINK_DIRECTORIES(${VTK_LIBRARY_DIRS})
+  INCLUDE_DIRECTORIES(${VTK_INCLUDE_DIRS})
+  LINK_DIRECTORIES(${VTK_LIBRARY_DIRS})
 
-#   IF (VTK_KITS MATCHES "HYBRID")
-#      ADD_DEFINITIONS(-DHAS_VTK_HYBRID)
-#      LINK_LIBRARIES (vtkHybrid)
-#   ENDIF (VTK_KITS MATCHES "HYBRID")
+  IF (VTK_KITS MATCHES "HYBRID")
+     ADD_DEFINITIONS(-DHAS_VTK_HYBRID)
+     LINK_LIBRARIES (vtkHybrid)
+  ENDIF (VTK_KITS MATCHES "HYBRID")
 
-#   LINK_LIBRARIES(vtkRendering vtkCommon vtkexpat
-#           vtkFiltering vtkfreetype vtkftgl vtkGraphics
-#           vtkHybrid vtkImaging vtkIO)
+  LINK_LIBRARIES(vtkRendering vtkCommon vtkexpat
+          vtkFiltering vtkfreetype vtkftgl vtkGraphics
+          vtkHybrid vtkImaging vtkIO)
 
-# ENDIF (VTK_FOUND)
+ENDIF (VTK_FOUND)
 
 # DITK
 
-SET(DITK_DIRECTORY /vol/vipdata/users/pa100/project
+SET(DITK_DIRECTORY /home/pa100/shared-data/Users/paul/work/project
         CACHE STRING "Where the DITK is installed")
 
 INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/recipes/include)
