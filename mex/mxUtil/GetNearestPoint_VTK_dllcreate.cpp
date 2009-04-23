@@ -11,6 +11,19 @@
 // #include <mxUtil.h>
 // #include <mxVTK.h>
 
+// Defines needed if matlab version < 7.3
+
+// Hack to see if the following typdefs have or have not been
+// made.  Matlab versions >7.3 do the typedef and define the
+// following preproc. definition.  If it is not defined, we need
+// to do a typedef.
+
+#ifndef MWSIZE_MAX
+typedef int mwIndex;
+typedef int mwSize;
+#endif
+
+
 // Defined at end.
 vtkPolyData* Pointsets2vtkPolyData(const mxArray* pts, int len);
 
@@ -28,7 +41,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
     mexErrMsgTxt("Two output arguments required."); 
 
   int ndim;
-  const int* dims1;
+  const mwSize* dims1;
 
   ndim = mxGetNumberOfDimensions(prhs[0]);
   dims1 = mxGetDimensions(prhs[0]);
@@ -37,7 +50,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
     mexErrMsgTxt("The first input argument should be an array of 3D points.");
 
   double* pprhs0;
-  const int* dims2;
+  const mwSize* dims2;
 
   pprhs0 = mxGetPr(prhs[0]);
   dims2 = mxGetDimensions(prhs[1]);
@@ -97,7 +110,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 
   double dx, dy, dz;
   double xyz[3];
-  int subscripts[2];
+  mwIndex subscripts[2];
   int index1, index2, index3;
   int temp_id = -1;
 
@@ -156,7 +169,7 @@ vtkPolyData* Pointsets2vtkPolyData(const mxArray* pts, int len)
 
   double* ppts;
   int i, ndim;
-  int subs[2];
+  mwIndex subs[2];
   double x, y, z;
   int p1, p2, p3;
 
