@@ -1,4 +1,4 @@
-function InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses)
+function InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses, appDir)
 
 prefix = 'prefix';
 
@@ -51,14 +51,16 @@ wmNoHolesFile = ['wm_seg_' num2str(noOfClasses) 'classes_roi_noholes.nii.gz'];
 wmNoHolesFile = fullfile(subjDir, 'result', wmNoHolesFile);
 [data, header] = loadAnalyze(wmNoHolesFile, 'Grey');
 
-SDF = CreateApproximated_SDF(data, header);
+SDF = CreateApproximated_SDF(data, header, appDir);
 
-saveAnalyze(SDF, header, 'SignedDistanceFunction.hdr', 'Real');
+filename = 'signedDistanceFunction.nii.gz';
+filename = fullfile(subjDir, 'cortexRecon', filename);
+saveAnalyze(SDF, header, filename, 'Real');
 
 % ====================================================================== %
 % perform the internal surface propagation using levelset
 
-filename = 'wm_seg_roi_noholes.hdr';
+ filename = 'wm_seg_roi_noholes.hdr';
 [imagedata, header] = loadAnalyze(filename, 'Grey');
 
 filename = 'SignedDistanceFunction.hdr';
