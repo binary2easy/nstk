@@ -1,4 +1,4 @@
-function neighbours = GetNeighbourhood2_6neighbors(data, header, offsets, x, y, z)
+function neighbours = getNeighbourhood2_6neighbors(data, header, offsets, x, y, z)
 
 % Get the 6-neighbourhood of (x, y, z) from a 3D image
 % the padding value is -inf
