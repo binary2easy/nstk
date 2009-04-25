@@ -4,6 +4,7 @@
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
+#include <vtkPolyDataWriter.h>
 
 #include <irtkImage.h>
 #include <irtkLocator.h>
@@ -28,17 +29,17 @@ typedef int mwSize;
 vtkPolyData* Pointsets2vtkPolyData(const mxArray* pts, int len);
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
-{ 
+{
 
   int i;
   int _x, _y, _z; // column, row, depth
 
   /* Check for proper number of arguments */
-  if (nrhs != 2) 
-    mexErrMsgTxt("Two input arguments required."); 
+  if (nrhs != 2)
+    mexErrMsgTxt("Two input arguments required.");
 
-  if (nlhs != 2) 
-    mexErrMsgTxt("Two output arguments required."); 
+  if (nlhs != 2)
+    mexErrMsgTxt("Two output arguments required.");
 
   int ndim;
   const mwSize* dims1;
@@ -74,21 +75,24 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
   double* pplhs1;
   pplhs0 = mxGetPr(plhs[0]);
   plhs[1] = mxCreateDoubleMatrix(len1, 3, mxREAL); // nearestPoints
- 
+
   pplhs1 = mxGetPr(plhs[1]);
 
   vtkPolyData* line2;
 
 
+  // prhs[1] should be the surface points, array with three columns (i, j, k indices.
+  // The number of rows is the number of surface points which can be within the label
+  // or just outside the label
   line2 = Pointsets2vtkPolyData(prhs[1], len2);
 
+  // line2 is a polydata set with the boundary points all
+  // given  a scalar value of 0.2
 
   int stage = 8;
-  mexPrintf("Got to stage %d\n", stage);
 
 
-
-  /*itkLocator *locator = new itkLocator;  
+  /*itkLocator *locator = new itkLocator;
     locator->SelectLocatorType(2); // kd-tree locator
     locator->SetDataSet(line2);*/
 
@@ -99,7 +103,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
   stage = 9;
   mexPrintf("Got to stage %d\n", stage);
 
-  //  kd_locator->BuildLocator();
+  kd_locator->BuildLocator();
 
   stage = 10;
   mexPrintf("Got to stage %d\n", stage);
@@ -116,7 +120,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 
   for (i = 0; i < len1; i++){
 
-    subscripts[0] = i;	
+    subscripts[0] = i;
 
     subscripts[1] = 0;
     index1 = mxCalcSingleSubscript(prhs[0], ndim, subscripts);
@@ -130,13 +134,12 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
     index3 = mxCalcSingleSubscript(prhs[0], ndim, subscripts);
     xyz[2] = pprhs0[index3];
 
-  stage = 13;
-  mexPrintf("Got to stage %d\n", stage);
-  return;
-
 
     temp_id = kd_locator->FindClosestPoint(xyz);
     //temp_id = locator->FindClosestPoint(xyz);
+
+//    stage = 13;
+//    mexPrintf("Got to stage %d\n", stage);
 
     line2->GetPoint(temp_id, xyz);
 
@@ -163,7 +166,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 
 
 
-
+// pts should be the surface points, 2D array with three columns (i, j, k indices into the volume)..
+// The number of rows is the number of surface points which can be within the label
+// or just outside the label
 vtkPolyData* Pointsets2vtkPolyData(const mxArray* pts, int len)
 {
 
@@ -198,9 +203,10 @@ vtkPolyData* Pointsets2vtkPolyData(const mxArray* pts, int len)
     y = ppts[p2];
     z = ppts[p3];
 
-    target->InsertPoint(i, x, y, z); 
-    //target->InsertNextPoint(x, y, z); 
+    target->InsertPoint(i, x, y, z);
+    //target->InsertNextPoint(x, y, z);
   }
+
 
 
   vtkIdList* idlist = vtkIdList::New();
@@ -233,14 +239,14 @@ vtkPolyData* Pointsets2vtkPolyData(const mxArray* pts, int len)
   target_pts->GetPointData()->SetScalars(radius);
   target_pts->Update();
 
-
-  /*vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
-    writer->SetFileTypeToBinary();
-    writer->SetInput(target_pts);
-    writer->SetFileName("test.vtp");
-    writer->Update();
-    writer->Write();*/
-
+///////////////////////////////////
+//    vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
+//    writer->SetFileTypeToBinary();
+//    writer->SetInput(target_pts);
+//    writer->SetFileName("test.vtk");
+//    writer->Update();
+//    writer->Write();
+///////////////////////////////
   radius->Delete();
   idlist->Delete();
   target->Delete();
