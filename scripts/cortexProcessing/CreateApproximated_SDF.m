@@ -1,9 +1,27 @@
-
-function SDF = createApproximatSDF(data, header)
+function SDF = CreateApproximated_SDF(data, header, appDir)
 
 % Create an approximated signed distance function for a 3D binary volume
 % the data should be a volume with isotropic resolution, so that the image
-% coordinates equal to the world coordinate
+% coordinates are a uniform scaling of the world coordinates along each
+% dimension.
+
+
+randstr  = ['temp-dmap' strrep(num2str(rand), '0.', '') '.nii'];
+saveAnalyze(data, header, randstr, 'Grey');
+
+command = [appDir '/dmap'];
+command = [command ' "' randstr '"'];
+command = [command ' "' randstr '"'];
+disp(command);
+[status, result] = system(command);
+
+[SDF, dummyHeader] = loadAnalyze(randstr, 'Real');
+
+
+delete(randstr);
+
+return
+
 
 % The 6-connected neighborhood is used for both inter and outer
 % surfaces.
@@ -74,22 +92,23 @@ for tt = 1:numOfInternal
     i = points_Internal(tt, 1);
     j = points_Internal(tt, 2);
     k = points_Internal(tt, 3);
-    SDF(j, i, k) = -(minDist(tt) + 0.5);
+    SDF(i, j, k) = -(minDist(tt) + 0.5);
 end
 
 % outer points
 outerInd = find(data==0);
 numOfOuter = length(outerInd);
-[j, i, k] = ind2sub(size(data), outerInd);
+[i, j, k] = ind2sub(size(data), outerInd);
 points_Outer = [i, j, k];
 clear outerInd i j k
 
 [minDist, nearestPoints] = GetNearestPoints_VTK(points_Outer, points);
+
 for tt = 1:numOfOuter
     i = points_Outer(tt, 1);
     j = points_Outer(tt, 2);
     k = points_Outer(tt, 3);
-    SDF(j, i, k) = minDist(tt) + 0.5;
+    SDF(i, j, k) = minDist(tt) + 0.5;
 end
 
 return
