@@ -1,4 +1,4 @@
-function AllinOne_Reconstruction(rootDir, fourClasses_flag, fiveClasses_flag)
+function AllinOne_Reconstruction(rootDir, fourClasses_flag, fiveClasses_flag, appDir)
 
 disp('----------------------------------------------------');
 disp('AllinOne_Reconstruction');
@@ -34,11 +34,11 @@ for i=1:num
   subjDir = fullfile(rootDir, subdirs{i});
 
   if (fourClasses_flag)
-    Cortex_Reconstruction_WholePipeline_AllRun(subjDir, 4);
+    Cortex_Reconstruction_WholePipeline_AllRun(subjDir, 4, appDir);
   end
   
   if (fiveClasses_flag)
-    Cortex_Reconstruction_WholePipeline_AllRun(subjDir, 5);
+    Cortex_Reconstruction_WholePipeline_AllRun(subjDir, 5, appDir);
   end
   
 end
