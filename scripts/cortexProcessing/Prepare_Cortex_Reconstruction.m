@@ -10,9 +10,12 @@ suffix = '.nii.gz';
 strNoClasses = num2str(noOfClasses);
 postDir = ['post' strNoClasses];
 
-filename = fullfile(subjDir, postDir, ['wm_seg_roi_noholes' suffix]);
+filename = ['wm_seg_' strNoClasses 'classes_roi_noholes.nii.gz'];
+filename = fullfile(subjDir, 'result', filename);
 
 if (exist(filename, 'file'))
+  disp('Prepare_Cortex_Reconstruction');
+  disp(['One file already exists, assuming no need to run script (' strNoClasses ' classes).']);
   return;
 end
 
