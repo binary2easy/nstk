@@ -1,10 +1,10 @@
-function Cortex_Reconstruction_WholePipeline_AllRun(subjDir, noOfClasses)
+function Cortex_Reconstruction_WholePipeline_AllRun(subjDir, noOfClasses, appDir)
 
 if (noOfClasses == 5)
   Prepare_membershipFunction(subjDir)
 end
 
-% Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
+Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
 disp('Cortex_Reconstruction_WholePipeline_AllRun');
 disp(subjDir);
 disp(['No of Classes : ' num2str(noOfClasses)]);
@@ -61,7 +61,7 @@ disp(['No of Classes : ' num2str(noOfClasses)]);
         factorCFL = 0.5;
         reInitialStep = 0.25;
 
-        InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses);
+        InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses, appDir);
 
         % -----------------------------------------------------------------
         % GM Enhancement
