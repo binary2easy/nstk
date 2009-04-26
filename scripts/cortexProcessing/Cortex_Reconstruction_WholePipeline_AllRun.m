@@ -44,25 +44,32 @@ disp(['No of Classes : ' num2str(noOfClasses)]);
         
         % -----------------------------------------------------------------
         % internal surface
+
+        lsParams.factorCFL = 0.5;
+        lsParams.accuracy = 'medium';
         %bValue = 0.02;
-        bValue = 0.05;
-        accuracy = 'medium';
-        tMax_ReIntialize = 3;
-        errorMax = 0.05;
-        resultDir = 'levelset_Internal';
-
-        %tMax = 2;                   % End time.
-        tMax = 4;                   % End time.
+        lsParams.bValue = 0.05;
+        lsParams.errorMax = 0.05;
+        lsParams.flag_outside = 0; % target surface must be outside the data0 surface
+        lsParams.flag_inside = 0; % target surface must be inside the data0 surface
+        lsParams.tMax = 4; % end time
+        lsParams.tPlot = 0.1;
+        lsParams.prefix = 'Internal';
+        lsParams.reInitialStep = 0.25;
+        lsParams.tMax_ReIntialize = 3;
+%        lsParams.resultDir = 'levelset_Internal';
+        lsParams.resultDir = [subjDir '/cortexRecon'];
         
-        tPlot = 0.1;
-        prefix = 'Internal';
-        flag_outside = 0; % target surface must be outside the data0 surface
-        flag_inside = 0; % target surface must be inside the data0 surface
-        factorCFL = 0.5;
-        reInitialStep = 0.25;
-
-        InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses, appDir);
-
+        InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses, appDir, lsParams);
+        
+        
+        
+        %%%%%%%%%%%%%%
+        % Got to here PA.
+        %%%%%%%%%%%%%%
+        
+        
+        
         % -----------------------------------------------------------------
         % GM Enhancement
         ratio_csf = 0.9;
@@ -80,7 +87,9 @@ disp(['No of Classes : ' num2str(noOfClasses)]);
         prefix = 'GM_Enhanced';
         shockThreshold = 0.8;
         tp = 0.32;
+        
         GM_Enhancement_Cruise
+
         % -----------------------------------------------------------------
         % external surface        
         bValue = 0.02;
