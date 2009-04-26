@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # When building for linux, this script needs to be run manually
 # after a standard make call.  This is to link the libraries for
 # use within the matlab environment.  Long term, we need to find
@@ -11,10 +13,14 @@
 # replace IRTK_LIB_DIR with local one e.g. /home/pa100/shared-data/Users/paul/work/project/linux/lib
 # replace VTK_DIR with local one, e.g. /home/pa100/shared-data/vtk/linux/bin
 
+MATLAB_BIN_DIR=""
+IRTK_LIB_DIR=""
+VTK_DIR=""
+
 cd linux/mxUtil/
 
-mex -o ../lib/LabelPVs_Seg_gmm_Global_MEX "CMakeFiles/LabelPVs_Seg_gmm_Global_MEX.dir/LabelPVs_Seg_gmm_Global_dllcreate.o" -LMATLAB_BIN_DIR/glnx86 -LIRTK_LIB_DIR -lmx -lmex -lmat -lcommon++ -lcontrib++ -lgeometry++ -limage++ -lniftiio -lrecipes -lregistration++ -lsegmentation++ -ltransformation++ -lznz -Wl,-rpath,MATLAB_BIN_DIR/glnx86:IRTK_LIB_DIR
+mex -o ../lib/LabelPVs_Seg_gmm_Global_MEX "CMakeFiles/LabelPVs_Seg_gmm_Global_MEX.dir/LabelPVs_Seg_gmm_Global_dllcreate.o" -L${MATLAB_BIN_DIR}/glnx86 -L${IRTK_LIB_DIR} -lmx -lmex -lmat -lcommon++ -lcontrib++ -lgeometry++ -limage++ -lniftiio -lrecipes -lregistration++ -lsegmentation++ -ltransformation++ -lznz -Wl,-rpath,${MATLAB_BIN_DIR}/glnx86:${IRTK_LIB_DIR}
 
-mex -o ../lib/GetNearestPoints_VTK "CMakeFiles/GetNearestPoints_VTK.dir/GetNearestPoint_VTK_dllcreate.o" -LMATLAB_BIN_DIR -LVTK_DIR -LIRTK_LIB_DIR -lmx -lmex -lmat -lvtkHybrid -lvtkRendering -lvtkGraphics -lvtkImaging -lvtkIO -lvtkFiltering -lvtkCommon -lvtkDICOMParser -lvtksqlite -lvtkexpat -lvtkftgl -lvtkfreetype -lcommon++ -lcontrib++ -lgeometry++ -limage++ -lniftiio -lrecipes -lregistration++ -lsegmentation++ -ltransformation++ -lznz -lvtkexoIIc -lGL -lXt -lSM -lICE -lX11 -lXext -lXss -lvtkmetaio -lvtksys -lpthread -ldl -lm -lvtkverdict -lvtkNetCDF -lvtkpng -lvtktiff -lvtkzlib -lvtkjpeg -lvtkFiltering -lvtkfreetype -lvtkftgl -lvtkGraphics -lvtkHybrid -lvtkImaging -lvtkIO -lvtkCommon -lcommon++ -lcontrib++ -lgeometry++ -limage++ -lniftiio -lrecipes -lregistration++ -lsegmentation++ -ltransformation++ -lznz -Wl,-rpath,MATLAB_BIN_DIR:VTK_DIR:IRTK_LIB_DIR 
+# mex -o ../lib/GetNearestPoints_VTK "CMakeFiles/GetNearestPoints_VTK.dir/GetNearestPoint_VTK_dllcreate.o" -L${MATLAB_BIN_DIR} -L${VTK_DIR} -L${IRTK_LIB_DIR} -lmx -lmex -lmat -lvtkHybrid -lvtkRendering -lvtkGraphics -lvtkImaging -lvtkIO -lvtkFiltering -lvtkCommon -lvtkDICOMParser -lvtksqlite -lvtkexpat -lvtkftgl -lvtkfreetype -lcommon++ -lcontrib++ -lgeometry++ -limage++ -lniftiio -lrecipes -lregistration++ -lsegmentation++ -ltransformation++ -lznz -lvtkexoIIc -lGL -lXt -lSM -lICE -lX11 -lXext -lXss -lvtkmetaio -lvtksys -lpthread -ldl -lm -lvtkverdict -lvtkNetCDF -lvtkpng -lvtktiff -lvtkzlib -lvtkjpeg -lvtkFiltering -lvtkfreetype -lvtkftgl -lvtkGraphics -lvtkHybrid -lvtkImaging -lvtkIO -lvtkCommon -lcommon++ -lcontrib++ -lgeometry++ -limage++ -lniftiio -lrecipes -lregistration++ -lsegmentation++ -ltransformation++ -lznz -Wl,-rpath,${MATLAB_BIN_DIR}:${VTK_DIR}:${IRTK_LIB_DIR} 
 
 
