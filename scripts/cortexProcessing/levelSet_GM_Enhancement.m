@@ -1,3 +1,4 @@
+function levelSet_GM_Enhancement()
 
 mkdir(resultDir);
 %---------------------------------------------------------------------------
