@@ -1,6 +1,6 @@
-function levelSet_GM_Enhancement()
+function [grid, TTR] = levelSet_GM_Enhancement(noOfClasses, imagedata, header, normalSpeed, data0, lsParams)
 
-mkdir(resultDir);
+
 %---------------------------------------------------------------------------
 % Integration parameters.
 t0 = 0;                      % Start time.
@@ -20,26 +20,32 @@ level = 0;
 g = [];
 g.dim = 3;
 % ==========================
+
+xsize = header.xsize;
+ysize = header.ysize;
+zsize = header.zsize;
+
+xvoxelsize = header.xvoxelsize;
+yvoxelsize = header.yvoxelsize;
+zvoxelsize = header.zvoxelsize;
+
 % g.min = [-xvoxelsize * (xsize-1)/2.0; -yvoxelsize * (ysize-1)/2.0; -zvoxelsize * (zsize-1)/2.0];
 % g.max = [xvoxelsize * (xsize-1)/2.0; yvoxelsize * (ysize-1)/2.0; zvoxelsize * (zsize-1)/2.0];
 
-g.min = [-yvoxelsize * (ysize-1)/2.0; -xvoxelsize * (xsize-1)/2.0; -zvoxelsize * (zsize-1)/2.0];
-g.max = [yvoxelsize * (ysize-1)/2.0; xvoxelsize * (xsize-1)/2.0; zvoxelsize * (zsize-1)/2.0];
-
-g.dx = [header.yvoxelsize; header.xvoxelsize; header.zvoxelsize];
-
+g.min = [-xvoxelsize * (xsize-1)/2.0; -yvoxelsize * (ysize-1)/2.0; -zvoxelsize * (zsize-1)/2.0];
+g.max = [ xvoxelsize * (xsize-1)/2.0;  yvoxelsize * (ysize-1)/2.0;  zvoxelsize * (zsize-1)/2.0];
+g.dx = [header.xvoxelsize; header.yvoxelsize; header.zvoxelsize];
 g.bdry = @addGhostExtrapolate;
-
 g = processGrid(g, imagedata);
 
 %---------------------------------------------------------------------------
 
 % Set up time approximation scheme.
-integratorOptions = odeCFLset('factorCFL', factorCFL, 'stats', 'on');
+integratorOptions = odeCFLset('factorCFL', lsParams.factorCFL, 'stats', 'on');
 
 % Choose approximations at appropriate level of accuracy.
 %   Same accuracy is used by both components of motion.
-switch(accuracy)
+switch(lsParams.accuracy)
  case 'low'
   derivFunc = @upwindFirstFirst;
   integratorFunc = @odeCFL1;
@@ -60,19 +66,19 @@ end
 % Set up motion in the normal direction.
 normalFunc = @termNormal;
 normalData.grid = g;
-normalData.speed = normalSpeed;
+normalData.speed = double (normalSpeed);
 normalData.derivFunc = derivFunc;
 
 %---------------------------------------------------------------------------
 curvatureFunc = @termCurvature;
 curvatureData.grid = g;
 curvatureData.curvatureFunc = @curvatureSecond;
-curvatureData.b = bValue;
+curvatureData.b = lsParams.bValue;
 
 %--------------------------------------------------------------------------
 
 % Convergence criteria
-deltaMax = errorMax * max(g.dx) * prod(g.N);
+deltaMax = lsParams.errorMax * max(g.dx) * prod(g.N);
 
 %---------------------------------------------------------------------------
 % Combine components of motion.
@@ -99,13 +105,15 @@ y0 = data(:);
 [y, schemeData] = postTimestepTTR(tNow, y0, schemeData);
 %========================================
 
+tMax = lsParams.tMax;
+
 while(tMax - tNow > small * tMax)
     disp(['tNow = ' num2str(tNow) ' ... ']);
     % Reshape data array into column vector for ode solver call.
     y0 = data(:);
 
     % How far to step?
-    tSpan = [ tNow, min(tMax, tNow + tPlot) ];
+    tSpan = [ tNow, min(tMax, tNow + lsParams.tPlot) ];
 
     % Take a timestep.
     [ t, y, schemeData ] = feval(integratorFunc, schemeFunc, tSpan, y0,...
@@ -128,31 +136,40 @@ while(tMax - tNow > small * tMax)
         break;
     end
 
-    filename = fullfile(resultDir, [prefix '_levelset_Result_' num2str(tNow) '.hdr']);
+%    filename = fullfile(lsParams.resultDir, [lsParams.prefix '_levelset_Result_' num2str(tNow) '.hdr']);
 %     SaveAnalyze(data, header, filename, 'Real');
 
-    data = signedDistanceIterative(g, data, accuracy, tMax_ReIntialize, errorMax);
+    data = signedDistanceIterative(g, data, lsParams.accuracy, lsParams.tMax_ReIntialize, lsParams.errorMax);
 
-%     filename = fullfile(resultDir, [prefix '_levelset_Result_afterReInitialization_' num2str(tNow) '.hdr']);
+%     filename = fullfile(lsParams.resultDir, [lsParams.prefix '_levelset_Result_afterReInitialization_' num2str(tNow) '.hdr']);
 %     SaveAnalyze(data, header, filename, 'Real');
     
-    filename = fullfile(resultDir, [prefix  '_TTR_' num2str(tNow) '.hdr']);
     ttr = schemeData.ttr;
     TTR = reshape(ttr, g.shape);
     index = find(TTR==inf);
     TTR(index(:)) = 10*tMax;
+%     filename = fullfile(lsParams.resultDir, [lsParams.prefix  '_TTR_' num2str(tNow) '.hdr']);
 %     SaveAnalyze(double(TTR), header, filename, 'Real');
 end
 
 endTime = cputime;
 fprintf('Total execution time %g seconds', endTime - startTime);
 
-TTR_filename = [prefix  '_TTR.hdr'];
 ttr = schemeData.ttr;
 TTR = reshape(ttr, g.shape);
 index = find(TTR==inf);
 TTR(index(:)) = 10*tMax;
-SaveAnalyze(double(TTR), header, TTR_filename, 'Real');
 
-filename = [prefix  '_levelset_Result.hdr'];
-SaveAnalyze(data, header, filename, 'Real');
+TTR_filename = [lsParams.prefix  '_TTR_' num2str(noOfClasses) 'classes.nii.gz'];
+TTR_filename = fullfile(lsParams.resultDir, TTR_filename);
+saveAnalyze(double(TTR), header, TTR_filename, 'Real');
+
+filename = [lsParams.prefix  '_levelset_Result_' num2str(noOfClasses) 'classes.nii.gz'];
+filename = fullfile(lsParams.resultDir, filename);
+saveAnalyze(data, header, filename, 'Real');
+
+grid = g;
+
+return
+
+
