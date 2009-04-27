@@ -4,8 +4,6 @@ function levelSet_External_InternalSurface(wmSegRoiNoHoles, header, normalSpeed,
 outputFilename = [lsParams.prefix  '_levelset_Result_' num2str(noOfClasses) 'classes.nii.gz'];
 outputFilename = fullfile(lsParams.resultDir, outputFilename);
 
-
-
 factorCFL        = lsParams.factorCFL;
 accuracy         = lsParams.accuracy;
 bValue           = lsParams.bValue;
