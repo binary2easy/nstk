@@ -4,7 +4,7 @@ if (noOfClasses == 5)
   Prepare_membershipFunction(subjDir)
 end
 
-Prepare_Cortex_Reconstruction(subjDir, noOfClasses);
+Prepare_Cortex_Reconstruction(subjDir, noOfClasses, appDir);
 disp('Cortex_Reconstruction_WholePipeline_AllRun');
 disp(subjDir);
 disp(['No of Classes : ' num2str(noOfClasses)]);
