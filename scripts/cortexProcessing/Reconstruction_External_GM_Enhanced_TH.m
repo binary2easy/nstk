@@ -98,6 +98,6 @@ normalSpeed = SignedPressureForce_internalsurfaces;
 % saveFlag = 1;
 thicknessSpeed = zeros(size(normalSpeed)) + eps;
 %--------------------------------------------------------------------------
-levelSet_External_InternalSurface_TP_MinTH(wmData, data0, normalSpeed, thicknessSpeed, header, lsParams, outputFilename);
+levelSet_External_InternalSurface_TP_MinTH(wmData, data0, normalSpeed, thicknessSpeed, header, lsParams, outputFilename, noOfClasses);
 
 
