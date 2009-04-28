@@ -1,5 +1,5 @@
 function levelSet_External_InternalSurface_TP_MinTH(wmData, data0, ...
-  normalSpeed, thicknessSpeed, header, lsParams, outputFilename)
+  normalSpeed, thicknessSpeed, header, lsParams, outputFilename, noOfClasses)
 
 
 % mkdir(resultDir);
@@ -191,7 +191,7 @@ while(tMax - tNow > small * tMax)
 %     end
 
     if ( abs(tNow - 1.5) < 0.01 )
-      filename = fullfile(lsParams.resultDir, [lsParams.prefix '_levelset_Result_' num2str(tNow) '.nii.gz']);
+      filename = fullfile(lsParams.resultDir, [lsParams.prefix '_levelset_Result_' num2str(tNow) '_' num2str(noOfClasses) 'classes.nii.gz']);
       saveAnalyze(data, header, filename, 'Real');
     end
     
