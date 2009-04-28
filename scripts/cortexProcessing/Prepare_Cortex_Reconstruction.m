@@ -1,6 +1,4 @@
-%%
-
-function Prepare_Cortex_Reconstruction(subjDir, noOfClasses)
+function Prepare_Cortex_Reconstruction(subjDir, noOfClasses, appDir)
 
 disp('Prepare_Cortex_Reconstruction')
 disp(subjDir);
@@ -18,7 +16,6 @@ if (exist(filename, 'file'))
   disp(['One file already exists, assuming no need to run script (' strNoClasses ' classes).']);
   return;
 end
-
 
 % p=dir(filename);
 % 
@@ -53,8 +50,7 @@ outputName = ['wm_seg_' strNoClasses 'classes_roi.nii.gz'];
 outputName = fullfile(subjDir, 'result', outputName);
 type = 'Grey';
 
-applyROI(inputName, outputName, minCorner, maxCorner, type);
-
+applyROI(inputName, outputName, minCorner, maxCorner, type, appDir);
 
 % WM REAL
 inputName  = ['post_wm_Real.nii.gz'];
@@ -63,7 +59,7 @@ outputName = ['wm_membership_roi.nii.gz'];
 outputName = fullfile(subjDir, postDir, outputName);
 type = 'Real';
 
-applyROI(inputName, outputName, minCorner, maxCorner, type);
+applyROI(inputName, outputName, minCorner, maxCorner, type, appDir);
 
 % GM REAL
 inputName  = ['post_gm_Real.nii.gz'];
@@ -72,8 +68,7 @@ outputName = ['gm_membership_roi.nii.gz'];
 outputName = fullfile(subjDir, postDir, outputName);
 type = 'Real';
 
-applyROI(inputName, outputName, minCorner, maxCorner, type);
-
+applyROI(inputName, outputName, minCorner, maxCorner, type, appDir);
 
 % CSF REAL
 
@@ -83,8 +78,7 @@ outputName = ['csf_membership_roi.nii.gz'];
 outputName = fullfile(subjDir, postDir, outputName);
 type = 'Real';
 
-applyROI(inputName, outputName, minCorner, maxCorner, type);
-
+applyROI(inputName, outputName, minCorner, maxCorner, type, appDir);
 
 % Brain with stem.
 inputName  = ['withStemBrain_N3.nii.gz'];
@@ -93,7 +87,7 @@ outputName = ['N3Brain_roi.nii.gz'];
 outputName = fullfile(subjDir, 'nuCorrected', outputName);
 type = 'Grey';
 
-applyROI(inputName, outputName, minCorner, maxCorner, type);
+applyROI(inputName, outputName, minCorner, maxCorner, type, appDir);
 
 % Brain mask.
 inputName  = ['brainmask_nostem.nii.gz'];
@@ -102,7 +96,7 @@ outputName = ['brainmask_nostem_roi.nii.gz'];
 outputName = fullfile(subjDir, 'brainMask', outputName);
 type = 'Grey';
 
-applyROI(inputName, outputName, minCorner, maxCorner, type);
+applyROI(inputName, outputName, minCorner, maxCorner, type, appDir);
 
 % Segmentation result.
 inputName  = ['segResult_' strNoClasses 'classes.nii.gz'];
@@ -111,7 +105,7 @@ outputName = ['segResult_' strNoClasses 'classes_roi.nii.gz'];
 outputName = fullfile(subjDir, 'result', outputName);
 type = 'Grey';
 
-applyROI(inputName, outputName, minCorner, maxCorner, type);
+applyROI(inputName, outputName, minCorner, maxCorner, type, appDir);
 
 % ??? PA.
 % save offsets minCorner maxCorner extraWidth
@@ -137,20 +131,58 @@ saveAnalyze(data_noholes, header, outputName, 'Grey');
 
 return
 
-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function     applyROI(inputName, outputName, minCorner, maxCorner, type)
+function     applyROI(inputName, outputName, minCorner, maxCorner, type, appDir)
 
-extraWidth = 4;
+rx1 = minCorner(1) - 1;
+ry1 = minCorner(2) - 1;
+rz1 = minCorner(3) - 1;
 
-[data, header] = loadAnalyze(inputName, type);
-[roiData, roiHeader] = getROI(data, header, minCorner,maxCorner);
-[roiData, roiHeader] = addExtraWidth(roiData, roiHeader, extraWidth);
+rx2 = maxCorner(1);
+ry2 = maxCorner(2);
+rz2 = maxCorner(3);
 
-if (strcmp(type, 'Grey'))
-  saveAnalyze(uint32(roiData), roiHeader, outputName, type);
-else
-  saveAnalyze(roiData, roiHeader, outputName, type);
+switch(type)
+  case 'Grey'
+    command = [appDir '/region'];
+  case 'Real'
+    command = [appDir '/region_real'];
+  otherwise
+    error('Unknown type %s', type);
 end
+
+command = [command ' "' inputName '"'];
+command = [command ' "' outputName '"'];
+command = [command ' -Rx1 ' num2str(rx1) ' -Ry1 ' num2str(ry1) ' -Rz1 ' num2str(rz1)];
+command = [command ' -Rx2 ' num2str(rx2) ' -Ry2 ' num2str(ry2) ' -Rz2 ' num2str(rz2)];
+[status, result] = system(command);
+
+% region wm_seg_4classes.nii.gz temp.nii.gz -Rx1 21  -Ry1 37 -Rz1 28 -Rx2 110 -Ry2 156 -Rz2 127
+
+% More arbitrariness!
+extraWidth = 4;
+strExtraWidth = num2str(extraWidth);
+
+command = [appDir '/addslices'];
+command = [command ' "' outputName '"'];
+command = [command ' "' outputName '"'];
+command = [command ' -x ' strExtraWidth ' -y ' strExtraWidth ' -z ' strExtraWidth];
+if (strcmp(type, 'Real'))
+  command = [command ' -real '];
+end
+[status, result] = system(command);
+
+% 
+% [data, header] = loadAnalyze(inputName, type);
+% [roiData, roiHeader] = getROI(data, header, minCorner,maxCorner);
+% [roiData, roiHeader] = addExtraWidth(roiData, roiHeader, extraWidth);
+% 
+% if (strcmp(type, 'Grey'))
+%   saveAnalyze(uint32(roiData), roiHeader, outputName, type);
+% else
+%   saveAnalyze(roiData, roiHeader, outputName, type);
+% end
 
 return
