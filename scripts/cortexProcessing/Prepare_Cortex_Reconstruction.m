@@ -157,7 +157,14 @@ command = [command ' "' inputName '"'];
 command = [command ' "' outputName '"'];
 command = [command ' -Rx1 ' num2str(rx1) ' -Ry1 ' num2str(ry1) ' -Rz1 ' num2str(rz1)];
 command = [command ' -Rx2 ' num2str(rx2) ' -Ry2 ' num2str(ry2) ' -Rz2 ' num2str(rz2)];
-[status, result] = system(command);
+
+preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}' 
+if strcmp(getenv('OS'), 'Linux')
+  command = [preCommand ';' command];
+end
+disp(command);
+
+[status, result] = system(command)
 
 % region wm_seg_4classes.nii.gz temp.nii.gz -Rx1 21  -Ry1 37 -Rz1 28 -Rx2 110 -Ry2 156 -Rz2 127
 
@@ -172,7 +179,13 @@ command = [command ' -x ' strExtraWidth ' -y ' strExtraWidth ' -z ' strExtraWidt
 if (strcmp(type, 'Real'))
   command = [command ' -real '];
 end
-[status, result] = system(command);
+
+if strcmp(getenv('OS'), 'Linux')
+  command = [preCommand ';' command];
+end
+disp(command);
+
+[status, result] = system(command)
 
 % 
 % [data, header] = loadAnalyze(inputName, type);
