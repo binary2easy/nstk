@@ -4,9 +4,9 @@ suffix = '.nii.gz';
 
 csfT     = loadAnalyze(subjPars.priorCSF, 'Real');
 gmT      = loadAnalyze(subjPars.priorCortex, 'Real');
-wmT1     = loadAnalyze(subjPars.priorWM, 'Real');
-wmT2     = loadAnalyze(subjPars.priorGanglia, 'Real');
-outlierT = loadAnalyze(subjPars.priorCerebellum, 'Real');
+wmT1     = loadAnalyze(subjPars.priorWM1, 'Real');
+wmT2     = loadAnalyze(subjPars.priorWM2, 'Real');
+outlierT = loadAnalyze(subjPars.priorOutlier, 'Real');
 
 [csfT, wmT1, wmT2, cortexT, outlierT] = preProcPriors_5(csfT, wmT1, wmT2, gmT, outlierT);
 
