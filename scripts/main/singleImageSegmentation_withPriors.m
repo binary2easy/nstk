@@ -68,7 +68,7 @@ flags.save = 1;
 
 % ==================================================================== %
 if (noOfClasses == 4)
-    % Global_Kmeans_EM_4classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask);
+    runEM_4_withPriors(subjPars, posteriorDir, flags, header, imagedata, brainmask);
 end
 
 if (noOfClasses == 5)
