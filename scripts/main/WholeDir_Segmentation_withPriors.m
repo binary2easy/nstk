@@ -77,12 +77,12 @@ for i = 1:num
     subjPars.imagefile = fullfile(subjPars.anatDir, files(1).name);
     
     subjPars.priorWM = fullfile(subjPars.priorDir, ['wm' suffix]);
-    subjPars.priorCortex = fullfile(subjPars.priorDir, ['cortex' suffix]);
-    subjPars.priorCSF = fullfile(subjPars.priorDir, ['csf' suffix]);
-    subjPars.priorGanglia = fullfile(subjPars.priorDir, ['ganglia' suffix]);
-    subjPars.priorCerebellum = fullfile(subjPars.priorDir, ['cerebellum' suffix]);
-    
+    subjPars.priorWM1 = fullfile(subjPars.priorDir, ['wm1' suffix]);
+    subjPars.priorWM2 = fullfile(subjPars.priorDir, ['wm2' suffix]);
 
+    subjPars.priorCortex = fullfile(subjPars.priorDir, ['gm' suffix]);
+    subjPars.priorCSF = fullfile(subjPars.priorDir, ['csf' suffix]);
+    subjPars.priorOutlier = fullfile(subjPars.priorDir, ['outlier' suffix]);
     
     if ( fourClasses_flag )
         subjPars.postDir = fullfile(subjDir, post4DirName);
