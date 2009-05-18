@@ -1,4 +1,5 @@
 function AllinOne_Reconstruction(rootDir, fourClasses_flag, fiveClasses_flag, appDir)
+%function AllinOne_Reconstruction(rootDir, list, fourClasses_flag, fiveClasses_flag, appDir)
 
 disp('----------------------------------------------------');
 disp('AllinOne_Reconstruction');
@@ -6,8 +7,12 @@ disp('AllinOne_Reconstruction');
 % Try and avoid this step.
 % copyFiles_cortexReconstruction; 
 
+
 cortex_reconstruction = 'cortex_reconstruction';
 [subdirs, num] = findAllDirectory(rootDir);
+% num = length(list);
+% subdirs = list;
+
 
 if ( fourClasses_flag )
   csf_seg_filename = 'csf_seg_4classes.hdr';
