@@ -47,7 +47,7 @@ for i = 1:num
     
     if ( ~ exist(unmaskedBrainCurr, 'file') )
         % Save to a short type file called withStemBrain_N3
-        command = [appDir '/convert "' anatomyCurr '" "' unmaskedBrainCurr '" -grey'];
+        command = [appDir '/convert "' anatomyCurr '" "' unmaskedBrainCurr '" -short'];
         disp(command);
         [s, w] = system(command);
 
@@ -61,7 +61,7 @@ for i = 1:num
 %     [data, header] = loadAnalyze(anatomyCurr, 'Grey');
 %     % Save to a short type file called withStemBrain_N3
 %     saveAnalyze(data, header, unmaskedBrainCurr, 'Grey');
-%     % Can be done by using convert in out -grey
+%     % Can be done by using convert in out -short
     
     
     % Mask from template propagation.
