@@ -63,11 +63,6 @@ disp(['No of Classes : ' num2str(noOfClasses)]);
         
         clear lsParams;
         
-        %%%%%%%%%%%%%%
-        % Got to here PA.
-        %%%%%%%%%%%%%%
-        
-        
         
         % -----------------------------------------------------------------
         % GM Enhancement
