@@ -40,6 +40,7 @@ for i = 1:num
         disp('More than one image in the anatomy directory : ');
         disp(['   ' anatomyDir]);
         error('');
+        return;
     end
     
     anatomyCurr       = fullfile(anatomyDir, files(1).name);
@@ -55,6 +56,7 @@ for i = 1:num
             disp('runMaskingAndCopying : convert failed');
             disp(command);
             error('');
+            return;
         end
     end
         
@@ -82,6 +84,7 @@ for i = 1:num
             disp('runMaskingAndCopying : padding failed');
             disp(command);
             error('');
+            return;
         end
     end
     
@@ -98,6 +101,7 @@ for i = 1:num
             disp('runMaskingAndCopying : padding failed');
             disp(command);
             error('');
+            return;
         end
     end
     
