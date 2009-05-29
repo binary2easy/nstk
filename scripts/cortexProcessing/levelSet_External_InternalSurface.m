@@ -174,6 +174,6 @@ endTime = cputime;
 fprintf('Total execution time %g seconds', endTime - startTime);
 
 
-SaveAnalyze(data, header, outputFilename, 'Real');
+saveAnalyze(data, header, outputFilename, 'Real');
 
 
