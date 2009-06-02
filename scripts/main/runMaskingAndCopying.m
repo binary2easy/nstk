@@ -23,6 +23,8 @@ maskName          = ['brainmask_nostem' suffix];
 unmaskedBrainName = ['withStemBrain_N3' suffix];
 maskedBrainName   = ['noStemBrain_N3' suffix];
 
+preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}'; 
+
 for i = 1:num
     
     % for every subject
@@ -49,12 +51,17 @@ for i = 1:num
     if ( ~ exist(unmaskedBrainCurr, 'file') )
         % Save to a short type file called withStemBrain_N3
         command = [appDir '/convert "' anatomyCurr '" "' unmaskedBrainCurr '" -short'];
+        
         disp(command);
+        if strcmp(getenv('OS'), 'Linux')
+          command = [preCommand ';' command];
+        end
         [s, w] = system(command);
 
         if (s ~= 0)
             disp('runMaskingAndCopying : convert failed');
             disp(command);
+            disp(w);
             error('');
             return;
         end
@@ -78,11 +85,15 @@ for i = 1:num
         % Incorporate info from native mask to modify propagated mask.
         command = [appDir '/padding "' maskCurr '" "' maskNative '" "' maskCurr '" 0 0'];
         disp(command);
+        if strcmp(getenv('OS'), 'Linux')
+          command = [preCommand ';' command];
+        end
         [s, w] = system(command);
 
         if (s ~= 0)
             disp('runMaskingAndCopying : padding failed');
             disp(command);
+            disp(w);
             error('');
             return;
         end
@@ -95,11 +106,15 @@ for i = 1:num
         % current subject to mask of the brain (no stem).
         command = [appDir '/padding "' anatomyCurr '" "' maskCurr '" "' maskedBrainCurr '" 0 0'];
         disp(command);
+        if strcmp(getenv('OS'), 'Linux')
+          command = [preCommand ';' command];
+        end
         [s, w] = system(command);
 
         if (s ~= 0)
             disp('runMaskingAndCopying : padding failed');
             disp(command);
+            disp(w);
             error('');
             return;
         end
