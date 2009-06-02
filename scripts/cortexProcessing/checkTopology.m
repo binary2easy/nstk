@@ -15,40 +15,35 @@ disp(['checking topology ... ']);
 yOut = yIn;
 schemeDataOut = schemeDataIn;
 
-B = schemeDataIn.B; % B will be improved at every iteration
+% B will be improved at every iteration
+B = schemeDataIn.B; 
 
 LastData = schemeDataIn.LastData;
 tempData = reshape(yIn, schemeDataIn.shape);
 NextData = zeros(size(tempData));
 
-connectivityObject = schemeDataIn.connectivityObject;
+% E.g. (6+,18), (6,26).  
+% (18, 6+) chosen in levelSet_External_InternalSurface_TP_MinTH
+connectivityObject     = schemeDataIn.connectivityObject;
 connectivityBackground = schemeDataIn.connectivityBackground;
 
 header = schemeDataIn.header;
 
 resultDir = schemeDataIn.resultDir;
-saveFlag = schemeDataIn.saveFlag;
+saveFlag  = schemeDataIn.saveFlag;
 
 tempSign = sign(tempData);
-index = find(tempSign==0);
-
-if ( isempty(index) == 0 )
-  tempSign(index) = 1;
-end
+tempSign(tempSign == 0) = 1;
 
 LastSign = sign(LastData);
-index = find(LastSign==0);
+LastSign(LastSign==0) = 1;
 
-if ( isempty(index) == 0 )
-  LastSign(index) = 1;
-end
-
-% find all voxels that the signs have not been changed
-% B keeps unchanged
+% Find all voxels where the signs have not changed.
+% B keeps unchanged.
 index = find(tempSign==LastSign);
 NextData(index) = tempData(index);
 
-% for every voxel whose sign has changed,
+% For every voxel whose sign has changed:
 index2 = find(tempSign~=LastSign);
 num = length(index2);
 
@@ -62,63 +57,65 @@ end
 
 offsets6 =  [1 0 0; -1 0 0; 0 1 0; 0 -1 0; 0 0 1; 0 0 -1];
 
-[NeighborStar_6, NeighborStar_6_Subs] = getNeighborStar(2, 2, 2, [3 3 3], offsets6);
+[n6star_inds, dummySubs] = getNeighborStar(2, 2, 2, [3 3 3], offsets6);
+% Include index of center point in a 2,2,2 window.
+n6_inds = [n6star_inds; 14];
 
-Cubic_6 = [NeighborStar_6; 14]; % center point
-
-offsets18 =  [0    -1    -1
-     -1     0    -1
-     0     0    -1
-     1     0    -1
-     0     1    -1
-    -1    -1     0
-     0    -1     0
-     1    -1     0
-    -1     0     0
-     1     0     0
-    -1     1     0
-     0     1     0
-     1     1     0
-     0    -1     1
-    -1     0     1
-     0     0     1
-     1     0     1
-     0     1     1];
+offsets18 = [
+  0    -1    -1
+ -1     0    -1
+  0     0    -1
+  1     0    -1
+  0     1    -1
+ -1    -1     0
+  0    -1     0
+  1    -1     0
+ -1     0     0
+  1     0     0
+ -1     1     0
+  0     1     0
+  1     1     0
+  0    -1     1
+ -1     0     1
+  0     0     1
+  1     0     1
+  0     1     1];
    
-[NeighborStar_18, NeighborStar_18_Subs] = getNeighborStar(2, 2, 2, [3 3 3], offsets18);
+[n18star_inds, dummySubs] = getNeighborStar(2, 2, 2, [3 3 3], offsets18);
+% Include index of center point in a 2,2,2 window.
+n18_inds = [n18star_inds; 14];
 
-Cubic_18 = [NeighborStar_18; 14]; % center point
-
-offsets26 =  [-1    -1    -1
-     0    -1    -1
-     1    -1    -1
-    -1     0    -1
-     0     0    -1
-     1     0    -1
-    -1     1    -1
-     0     1    -1
-     1     1    -1
-    -1    -1     0
-     0    -1     0
-     1    -1     0
-    -1     0     0
-     1     0     0
-    -1     1     0
-     0     1     0
-     1     1     0
-    -1    -1     1
-     0    -1     1
-     1    -1     1
-    -1     0     1
-     0     0     1
-     1     0     1
-    -1     1     1
-     0     1     1
-     1     1     1];
+offsets26 =  [
+ -1    -1    -1
+  0    -1    -1
+  1    -1    -1
+ -1     0    -1
+  0     0    -1
+  1     0    -1
+ -1     1    -1
+  0     1    -1
+  1     1    -1
+ -1    -1     0
+  0    -1     0
+  1    -1     0
+ -1     0     0
+  1     0     0
+ -1     1     0
+  0     1     0
+  1     1     0
+ -1    -1     1
+  0    -1     1
+  1    -1     1
+ -1     0     1
+  0     0     1
+  1     0     1
+ -1     1     1
+  0     1     1
+  1     1     1];
    
-[NeighborStar_26, NeighborStar_26_Subs] = getNeighborStar(2, 2, 2, [3 3 3], offsets26);
-
-Cubic_26 = [NeighborStar_26; 14]; % center point
+[n26star_inds, dummySubs] = getNeighborStar(2, 2, 2, [3 3 3], offsets26);
+% Include index of center point in a 2,2,2 window.
+n26_inds = [n26star_inds; 14];
 
 % [T_object, T_backgournd] = ComputeTopologicalNumber(index2, B, connectivityObject, connectivityBackground);
 
@@ -127,17 +124,17 @@ if ( saveFlag )
   disp(['ntimes = ' num2str(ntimes)]);
 
   simplePoints = zeros(size(B), 'uint32');
-  simplePoints(find(B==1)) = 80;
+  simplePoints(B == 1) = 80;
   filename = fullfile(resultDir, ['B_' num2str(ntimes) '.nii.gz']);
   SaveAnalyze(simplePoints, header, filename, 'Grey');
 end
 
 simplePoints = zeros(size(B), 'uint32');
-simplePoints(find(B==1)) = 64;
-
+simplePoints(B == 1) = 64;
 
 value = 0;
-shape = size(B);
+sizeB = size(B);
+
 for tt = 1:num
   [i, j, k] = ind2sub(schemeDataOut.shape, index2(tt));
     
@@ -146,17 +143,17 @@ for tt = 1:num
   
   if ( (connectivityObject==26) && (connectivityBackground==6) )
         
-    [NeighborStar_26, NeighborStar_26_Subs] = getNeighborStar(i, j, k, shape, offsets26);
+    [n26star_inds, n26star_subs] = getNeighborStar(i, j, k, sizeB, offsets26);
     
-    [InterResult, cubicVolume] = intersect_topology(NeighborStar_26, NeighborStar_26_Subs, i, j, k, B, 1); % object
+    [InterResult, cubicVolume] = intersect_topology(n26star_inds, n26star_subs, i, j, k, B, 1); % object
     
     T_object = bwLabel_cardinality3D(cubicVolume, connectivityObject);
 
-    [NeighborStar_18, NeighborStar_18_Subs] = getNeighborStar(i, j, k, shape, offsets18);
+    [n18star_inds, n18star_subs] = getNeighborStar(i, j, k, sizeB, offsets18);
     
-    [InterResult, cubicVolume] = intersect_topology(NeighborStar_18, NeighborStar_18_Subs, i, j, k, B, 0); % object
+    [InterResult, cubicVolume] = intersect_topology(n18star_inds, n18star_subs, i, j, k, B, 0); % object
         
-    T_backgournd = bwLabel_cardinality(cubicVolume, connectivityBackground, 1, Cubic_6, Cubic_18, Cubic_26);
+    T_backgournd = bwLabel_cardinality(cubicVolume, connectivityBackground, 1, n6_inds, n18_inds, n26_inds);
   end
 
   if ( (connectivityObject==18) && (connectivityBackground==6) )
@@ -164,12 +161,12 @@ for tt = 1:num
     [GN_inds, GN_subs, cubicVolume] = geodesicNeighborhood3D(i, j, k, B, 1, connectivityObject, 2, offsets6, offsets18, offsets26);
     
     
-    %     T_object = bwLabel_cardinality(cubicVolume, connectivityObject, 0, Cubic_6, Cubic_18, Cubic_26);
+    %     T_object = bwLabel_cardinality(cubicVolume, connectivityObject, 0, n6_inds, n18_inds, n26_inds);
     T_object = bwLabel_cardinality3D(cubicVolume, connectivityObject);
 
     % background, 6+ connectivity
     [GN_inds, GN_subs, cubicVolume] = geodesicNeighborhood3D(i, j, k, B, 0, connectivityBackground, 3, offsets6, offsets18, offsets26);
-    %     T_backgournd = bwLabel_cardinality(cubicVolume, connectivityBackground, 0, Cubic_6, Cubic_18, Cubic_26);
+    %     T_backgournd = bwLabel_cardinality(cubicVolume, connectivityBackground, 0, n6_inds, n18_inds, n26_inds);
     T_backgournd = bwLabel_cardinality3D(cubicVolume, connectivityBackground);
   end
   
@@ -177,7 +174,7 @@ for tt = 1:num
   %======================================================================
   %     [T_object, T_backgournd] = ComputeTopologicalNumber_singlePoint(i, j, k, B, ...
   %                         connectivityObject, connectivityBackground, ...
-  %                         offsets6, Cubic_6, offsets18, Cubic_18, offsets26, Cubic_26);
+  %                         offsets6, n6_inds, offsets18, n18_inds, offsets26, n26_inds);
   
   if ( (T_object==1) & (T_backgournd==1) )
     % simple point, the phi can be updated
