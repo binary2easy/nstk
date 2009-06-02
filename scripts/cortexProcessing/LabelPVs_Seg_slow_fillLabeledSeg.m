@@ -33,7 +33,7 @@ for k = 1:zsize
             label = segResult2(i, j, k);
 
             % if the pixel is nonbrain or csf or background (label 0), continue
-            if ( (label == 0) | (label == csflabel) | (label == nonbrainlabel) )
+            if ( (label == 0) || (label == csflabel) || (label == nonbrainlabel) )
                 continue;
             end
 
