@@ -59,13 +59,19 @@ for i = 1:num
     command = [command ' ' num2str(resolution(2), '%10.8f')];
     command = [command ' ' num2str(resolution(3), '%10.8f')];
     command = [command ' -bspline'];
-
+    
+    preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
+    if strcmp(getenv('OS'), 'Linux')
+      command = [preCommand ';' command];
+    end
     [s, w] = system(command);
 
     if (s ~= 0)
       disp('Resample failed');
       disp(command);
+      disp(w);
       error('');
+      return;
     end
 
 end

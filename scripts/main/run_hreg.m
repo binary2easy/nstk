@@ -48,13 +48,19 @@ end
 
 command = [command  ' -Tp ' num2str(padValue) ' -ds ' num2str(cpSpacing)];
 
+preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}'; 
+if strcmp(getenv('OS'), 'Linux')
+  command = [preCommand ';' command];
+end
+
 [s, w] = system(command);
 
 if (s ~= 0)
-  disp(w);
-  disp('');
   disp('run_hreg: error ');
+  disp(command);
+  disp(w);
   error('');
+  return;
 end
 
 return

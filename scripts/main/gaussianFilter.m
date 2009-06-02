@@ -20,22 +20,23 @@ sigma = (sigmaX + sigmaY + sigmaZ) / 3.0;
 
 command = [command ' ' randstr ' ' randstr ' ' num2str(sigma)];
 
+preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}'; 
+if strcmp(getenv('OS'), 'Linux')
+  command = [preCommand ';' command];
+end
+
 system(command);
 
-[output, temp] = loadAnalyze(randstr, dataType);
+[status, result] = loadAnalyze(randstr, dataType);
 
 delete(randstr);
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Previously made a dll call to a mex compiled version of
-%% itkGaussianBlurring.
+if (status ~= 0)
+  disp('Prepare_Cortex_Reconstruction : region call failed');
+  disp(command);
+  disp(result);
+  error('');
+  return;
+end
 
-% Previous signature and output:
-
-% function filterout = Gaussianfilter(data, header, SigmaX, SigmaY, SigmaZ, halfwidth, label)
-
-% Input arguments: data, header, sigmaX, sigmaY, sigmaZ, halfwidth, label
-% of Grey image('Grey') or Real image('Real')
-% output : filterout
-
-% filterout = Gaussianfilter(data, header, SigmaX, SigmaY, SigmaZ, halfwidth, label);
+return

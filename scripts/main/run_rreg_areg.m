@@ -27,11 +27,17 @@ if (~exist(dofout_rreg))
         command = [command ' -dofin "' dofin_rreg '"'];
     end
     
+    preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
+    if strcmp(getenv('OS'), 'Linux')
+      command = [preCommand ';' command];
+    end
     [s, w] = system(command);
     
     if (s ~= 0)
       disp('run_rreg_areg error: rreg failed.');
+      disp(w);
       error('');
+      return;
     end    
 end
 
@@ -57,69 +63,18 @@ if (~exist(dofout_areg))
     command = [command ' -dofout "' dofout_areg '"'];
     command = [command ' -dofin "' dofin_areg '"'];
 
+    preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
+    if strcmp(getenv('OS'), 'Linux')
+      command = [preCommand ';' command];
+    end
     [s, w] = system(command);
     
     if (s ~= 0)
       disp('run_rreg_areg error: areg failed.');
+      disp(w);
       error('');
+      return;
     end    
 end
 
 return
-%
-%
-% 
-% 
-% path_abo = fullfile(target_Dir, target_anatomyDir, '*.hdr' );
-% indir = dir(path_abo) ;
-% num = length(indir);
-% if ( num == 0 )
-%     disp('empty directory');
-%     return;
-% end
-% 
-% target = fullfile(target_Dir, target_anatomyDir, indir(1).name);
-% [pathstrT,nameT,extT,versnT] = fileparts(target);
-% 
-% % sourcefile
-% 
-% path_abo = fullfile(source_Dir, source_anatomyDir, '*.hdr' );
-% indir = dir(path_abo);
-% num = length(indir);
-% if ( num == 0 )
-%     disp('empty directory');
-%     return;
-% end
-% 
-% source = fullfile(source_Dir, source_anatomyDir, indir(1).name);
-% [pathstrS,nameS,extS,versnT] = fileparts(source);
-% 
-% % result filenames
-% 
-% %%%%%%%%%%%
-% %%% PA : these dof files seem to be in reverse order compared with
-% %%% how we normally name them.
-% 
-% rregname = [nameT '-' nameS '-rreg.dof'];
-% rregfullname = fullfile(result_Dir, Registration_resultsDir, rregname);
-% 
-% aregname = [nameT '-' nameS '-areg.dof'];
-% aregfullname = fullfile(result_Dir, Registration_resultsDir, aregname);
-% 
-% hregnames = cell(numofparameters);
-% for i = 1:numofparameters
-%     hregnames{i} = [nameT '-' nameS '-hreg' '-' num2str(i) '.dof'];
-%     hregnames{i} = fullfile(result_Dir, Registration_resultsDir, hregnames{i});
-% end
-% 
-% % perform the registration
-% 
-%     % rreg
-%       RigidRegistrationRun2(target, source, rregfullname, rreg_parameterfile);
-%     
-%     % areg
-%       AffineRegistrationRun2(target, source, aregfullname, areg_parameterfile, rregfullname);
-%     
-%     % hreg
-%      NonRigidRegistrationRun2(target, source, hregnames, hreg_parameterfiles, numofparameters, aregfullname);
-% return;
