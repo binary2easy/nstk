@@ -125,19 +125,20 @@ schemeData.flag_outside = lsParams.flag_outside;
 schemeData.flag_inside = lsParams.flag_inside;
 
 % for the topology perserving level set
-schemeData.B = zeros(size(data0), 'uint8');
-schemeData.LastY = schemeData.y0;
+schemeData.B        = zeros(size(data0), 'uint8');
+schemeData.LastY    = schemeData.y0;
 schemeData.LastData = data0;
-schemeData.connectivityObject = 18;
+
+schemeData.connectivityObject     = 18;
 schemeData.connectivityBackground = 6;
 
-schemeData.saveFlag = lsParams.saveFlag;
-schemeData.header = header;
+schemeData.saveFlag  = lsParams.saveFlag;
+schemeData.header    = header;
 schemeData.resultDir = lsParams.resultDir;
 
 schemeData.minThickness = lsParams.minThickness;
 schemeData.maxThickness = lsParams.maxThickness;
-schemeData.voxelsize = voxelsize;
+schemeData.voxelsize    = voxelsize;
 
 schemeData = processTopology(schemeData);
 
