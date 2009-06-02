@@ -1,17 +1,17 @@
+function [nstar_inds, nstar_subs] = getNeighborStar(i, j, k, dims, offsets)
 
-function [NeighborStar, NeighborStar_Subs] = getNeighborStar(i, j, k, shape, offsets)
-
-% get the index of voxels in the neighbor star centered at (i, j, k)
-% neighborNum: 6, 18, 26
+% Get the indices of voxels in a neighbor star centered at (i, j, k).
+% The indices are calculated assuming the voxel is in an image of size dims.
+% There can be 6, 18 or 26 neighbours.
 
 num = size(offsets, 1);
-NeighborStar_Subs = ones(num, 3);
+nstar_subs = ones(num, 3);
 
-NeighborStar_Subs(:, 1) = i;
-NeighborStar_Subs(:, 2) = j;
-NeighborStar_Subs(:, 3) = k;
+nstar_subs(:, 1) = i;
+nstar_subs(:, 2) = j;
+nstar_subs(:, 3) = k;
 
-NeighborStar_Subs = NeighborStar_Subs + offsets;
-NeighborStar = sub2ind(shape, NeighborStar_Subs(:,1), NeighborStar_Subs(:,2), NeighborStar_Subs(:,3));
+nstar_subs = nstar_subs + offsets;
+nstar_inds = sub2ind(dims, nstar_subs(:,1), nstar_subs(:,2), nstar_subs(:,3));
 
 return;
