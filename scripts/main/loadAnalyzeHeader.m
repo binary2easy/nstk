@@ -1,5 +1,11 @@
 function header = loadAnalyzeHeader(analyzename)
 
+if ~exist(analyzename, 'file');
+  header = struct([]);
+  error('loadAnalyzeHeader : no such file : %s', analyzename);
+  return
+end
+
    
 if (findstr('.nii.gz', analyzename))
     randstr = ['temp-' strrep(num2str(rand), '0.', '') '.nii'];
@@ -35,39 +41,5 @@ header.nii.original = [];
 header.nii.filetype = nii.filetype;
 header.nii.machine  = nii.machine;
 
+return
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% function [data, header] = loadAnalyze(analyzename, realORgrey)
-
-% savedDir = pwd;
-% [tempPath, tempName, tempExt, tempVer] = fileparts(analyzename);
-% if (isdir(tempPath))
-%     cd (tempPath);
-% end
-% %info = analyze75info(analyzename);
-% info = analyze75info(tempName);
-% data = analyze75read(info);
-% cd (savedDir);
-
-
-% if ( strcmp(realORgrey, 'Grey') == 1 )
-%     data = uint32(data);
-% elseif (strcmp(realORgrey, 'Real') == 1)
-%     data = single(data);
-% end
-
-% header = struct('xsize', 0, 'ysize', 0, 'zsize', 0, ...
-%         'xvoxelsize', 0.0, 'yvoxelsize', 0.0, 'zvoxelsize', 0.0, 'bytes', 2);
-% header.xsize = double(info.Dimensions(1));
-% header.ysize = double(info.Dimensions(2));
-% header.zsize = double(info.Dimensions(3));
-% header.xvoxelsize = info.PixelDimensions(1);
-% header.yvoxelsize = info.PixelDimensions(2);
-% header.zvoxelsize = info.PixelDimensions(3);
-% header.bytes = double(info.BitDepth/8);
-% header;
-
-% data(1:header.ysize, : ,:) = data(header.ysize:-1:1, : ,:);

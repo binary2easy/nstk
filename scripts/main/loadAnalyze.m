@@ -14,6 +14,12 @@ function [data, header] = loadAnalyze(analyzename, realOrGrey)
 %
 % still need to incorporate ability to open *.nii.gz files.
 
+if ~exist(analyzename, 'file');
+  header = struct([]);
+  data   = [];
+  error('loadAnalyzeHeader : no such file : %s', analyzename);
+  return
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
