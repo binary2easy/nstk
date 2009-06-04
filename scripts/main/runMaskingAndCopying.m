@@ -42,7 +42,7 @@ for i = 1:num
         disp('More than one image in the anatomy directory : ');
         disp(['   ' anatomyDir]);
         error('');
-        return;
+        continue;
     end
     
     anatomyCurr       = fullfile(anatomyDir, files(1).name);
@@ -63,7 +63,7 @@ for i = 1:num
             disp(command);
             disp(w);
             error('');
-            return;
+            continue;
         end
     end
         
@@ -95,7 +95,7 @@ for i = 1:num
             disp(command);
             disp(w);
             error('');
-            return;
+            continue;
         end
     end
     
@@ -116,7 +116,7 @@ for i = 1:num
             disp(command);
             disp(w);
             error('');
-            return;
+            continue;
         end
     end
     
