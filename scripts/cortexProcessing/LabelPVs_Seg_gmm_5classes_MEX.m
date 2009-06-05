@@ -24,6 +24,8 @@ end
 connectivity = mix.neighborNum;
 lambda = mix.lamda;
 
+wmlabel = wmlabel(1);
+
 [LabeledSeg, Priors] = segLabelsPVCorrection_5classes(mix.priors, mix.indexes, segResult, connectivity, lambda, ...
   csflabel, wmlabel, cortexlabel, pvlabel, nonbrainlabel);
 
