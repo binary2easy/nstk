@@ -25,11 +25,7 @@ if strcmp(getenv('OS'), 'Linux')
   command = [preCommand ';' command];
 end
 
-system(command);
-
-[status, result] = loadAnalyze(randstr, dataType);
-
-delete(randstr);
+[status, result] = system(command);
 
 if (status ~= 0)
   disp('Prepare_Cortex_Reconstruction : region call failed');
@@ -38,5 +34,9 @@ if (status ~= 0)
   error('');
   return;
 end
+
+[output, header] = loadAnalyze(randstr, dataType);
+
+delete(randstr);
 
 return
