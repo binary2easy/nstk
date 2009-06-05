@@ -13,35 +13,24 @@ end
 return;
 
 function data_noholes = autoFillHoles(data, header)
-% Fill the holes within the binary volume
+% Help fill the holes within the binary volume data
 
 data_noholes = data;
 
-% pp = data;
-% Previous step commented out.  It was made redundant by the next step.
-pp = 1 - data;
+background = 1 - data;
 
-label = 1;
-[l, num] = bwlabeln(pp, 6);
-
-xsize = header.xsize;
-ysize = header.ysize;
-zsize = header.zsize;
+[labels, num] = bwlabeln(background, 6);
 
 volumes = zeros(num, 1);
 
-total = xsize * ysize * zsize;
-
-for i = 1:total
-  if (l(i) > 0)
-    volumes(l(i)) = volumes(l(i)) + 1;
-  end
+for i = 1:num
+  temp = labels == i;
+  volumes(i) = sum(temp(:));
 end
 
-vd = sort(volumes, 'descend');
 [largest, index] = max(volumes);
 
-data_noholes(find(l ~= index(1))) = 1;
+data_noholes(labels ~= index(1)) = 1;
 
 return
 
@@ -60,16 +49,16 @@ data_noholes = data;
 for k = 2:zsize-1
   for j = 2:ysize-1
     for i = 2:xsize-1
-
+      
+      neighbourhood = data(i-1:i+1, j-1:j+1, k-1:k+1);
+      
       label = data(i, j, k);
-      neighbourhood = getNeighbourhood(data, header, i, j, k, 3);
+      equalNbrs = neighbourhood == label;
       
-      numLabel = length(find(neighbourhood == label));
-      
-      if ( numLabel <= thresh )
+      if ( sum(equalNbrs(:)) <= thresh )
         data_noholes(i, j, k) = 1 - label;
       end
-      
+ 
     end
   end
 end
