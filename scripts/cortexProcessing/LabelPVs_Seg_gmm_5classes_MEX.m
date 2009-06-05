@@ -15,23 +15,17 @@ num = length(wmlabel);
 if (num>1)
     
     for i = 2:num
-        segResult(find(segResult==wmlabel(i))) = wmlabel(1);
+        segResult(segResult==wmlabel(i)) = wmlabel(1);
     end
     
 end
 
-% p = wmlabel(1);
-% wmlabel = p;
 
-neighborNum = mix.neighborNum;
-lamda = mix.lamda;
-xsize = mix.header.xsize;
-ysize = mix.header.ysize;
-zsize = mix.header.zsize;
+connectivity = mix.neighborNum;
+lambda = mix.lamda;
 
-% CHECK OUTPUT AND INPUT HAVE THE SAME DIMENSIONS ..
-[LabeledSeg, Priors] = LabelPVs_Seg_gmm_Global_MEX(single(mix.priors), mix.indexes, segResult, neighborNum, lamda,...
-    xsize, ysize, zsize, csflabel, wmlabel, cortexlabel, pvlabel, nonbrainlabel);
+[LabeledSeg, Priors] = segLabelsPVCorrection_5classes(mix.priors, mix.indexes, segResult, connectivity, lambda, ...
+  csflabel, wmlabel, cortexlabel, pvlabel, nonbrainlabel);
 
 mix.priors = Priors;
 
