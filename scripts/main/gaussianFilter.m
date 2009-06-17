@@ -24,11 +24,11 @@ preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
 if strcmp(getenv('OS'), 'Linux')
   command = [preCommand ';' command];
 end
-
+disp(command);
 [status, result] = system(command);
 
 if (status ~= 0)
-  disp('Prepare_Cortex_Reconstruction : region call failed');
+  disp('gaussianFilter : region call failed');
   disp(command);
   disp(result);
   error('');
