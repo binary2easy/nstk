@@ -1,4 +1,4 @@
-function Global_Kmeans_EM_4classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask)
+function Global_Kmeans_EM_4classes_PVs(subjPars, header, imagedata, brainmask, appDir)
 
 suffix = '.nii.gz';
 
@@ -37,7 +37,7 @@ sigmaOutlier = header.xvoxelsize;
 % halfwidthOutlier = 2;
 
 [csfT, wmT, cortexT, outlierT] = CreateTemplates_4classes_Gaussian(header, csfSeg, wmSeg, gmSeg, outlierSeg, ...
-                    sigmaCSF, sigmaWM, sigmaCortex, sigmaOutlier);
+                    sigmaCSF, sigmaWM, sigmaCortex, sigmaOutlier, appDir);
                 
 clear wmSeg gmSeg csfSeg outlierSeg kmeans_label
 

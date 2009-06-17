@@ -1,4 +1,4 @@
-function Global_Kmeans_EM_5classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask)
+function Global_Kmeans_EM_5classes_PVs(subjPars, header, imagedata, brainmask, appDir)
 
 suffix = '.nii.gz';
 
@@ -55,7 +55,7 @@ halfwidthOutlier = 2;
 clear LabeledSeg
 
 [csfT, wmT1, wmT2, cortexT, outlierT] = CreateTemplates_5classes_Gaussian(header, csfSeg, wmSeg1, wmSeg2, gmSeg, outlierSeg, ...
-                    sigmaCSF, sigmaWM1, sigmaWM2, sigmaCortex, sigmaOutlier);
+                    sigmaCSF, sigmaWM1, sigmaWM2, sigmaCortex, sigmaOutlier, appDir);
 
 
 % EM segmentation

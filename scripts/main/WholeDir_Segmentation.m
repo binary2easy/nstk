@@ -1,4 +1,4 @@
-function WholeDir_Segmentation(rootDir, fourClasses_flag, fiveClasses_flag)
+function WholeDir_Segmentation(rootDir, fourClasses_flag, fiveClasses_flag, appDir)
 
 cd(rootDir);
 [subdirs, num] = findAllDirectory(rootDir);
@@ -96,11 +96,11 @@ for i = 1:num
 
     if ( fourClasses_flag )
         subjPars.postDir = fullfile(subjDir, post4DirName);
-        singleImageSegmentation(4, subjPars);
+        singleImageSegmentation(4, subjPars, appDir);
     end
     
     if ( fiveClasses_flag )
         subjPars.postDir = fullfile(subjDir, post5DirName);
-        singleImageSegmentation(5, subjPars);
+        singleImageSegmentation(5, subjPars, appDir);
     end
 end

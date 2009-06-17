@@ -1,6 +1,6 @@
 
 function [csfT, wmT, gmT, outlierT] = CreateTemplates_4classes_Gaussian(header, csfSeg, wmSeg, gmSeg, outlierSeg, ...
-                    sigmaCSF, sigmaWM, sigmaGM, sigmaOutlier)
+                    sigmaCSF, sigmaWM, sigmaGM, sigmaOutlier, appDir)
 
 % Create probability templates by blurring hard label maps.
 
@@ -11,10 +11,10 @@ gmT      = single(gmSeg);
 wmT      = single(wmSeg);
 outlierT = single(outlierSeg);
 
-G_csfT     = gaussianFilter(csfT, header, sigmaCSF, sigmaCSF, sigmaCSF, 'Real');
-G_gmT      = gaussianFilter(gmT, header, sigmaGM, sigmaGM, sigmaGM, 'Real');
-G_wmT      = gaussianFilter(wmT, header, sigmaWM, sigmaWM, sigmaWM, 'Real');
-G_outlierT = gaussianFilter(outlierT, header, sigmaOutlier, sigmaOutlier, sigmaOutlier, 'Real');
+G_csfT     = gaussianFilter(csfT, header, sigmaCSF, sigmaCSF, sigmaCSF, 'Real', appDir);
+G_gmT      = gaussianFilter(gmT, header, sigmaGM, sigmaGM, sigmaGM, 'Real', appDir);
+G_wmT      = gaussianFilter(wmT, header, sigmaWM, sigmaWM, sigmaWM, 'Real', appDir);
+G_outlierT = gaussianFilter(outlierT, header, sigmaOutlier, sigmaOutlier, sigmaOutlier, 'Real', appDir);
 
 minP = 0.02;
 

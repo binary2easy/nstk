@@ -1,4 +1,4 @@
-function output = gaussianFilter(data, header, sigmaX, sigmaY, sigmaZ, dataType)
+function output = gaussianFilter(data, header, sigmaX, sigmaY, sigmaZ, dataType, appDir)
 
 % Perform a gaussian filter using IRTK executables blur or blur_real.
 
@@ -7,10 +7,11 @@ function output = gaussianFilter(data, header, sigmaX, sigmaY, sigmaZ, dataType)
 randstr = ['temp-' strrep(num2str(rand), '0.', '') '.nii'];
 saveAnalyze(data, header, randstr, dataType);
 
+
 if (strcmp(dataType, 'Grey'))
-    command = 'blur ';
+    command = [appDir '/blur '];
 elseif (strcmp(dataType, 'Real'))
-    command = 'blur_real ';
+    command = [appDir '/blur_real '];
 else
     disp('gaussianFilter.m');
     error(['Incorrect data type specified : ' dataType]);
@@ -28,7 +29,7 @@ disp(command);
 [status, result] = system(command);
 
 if (status ~= 0)
-  disp('gaussianFilter : region call failed');
+  disp('gaussianFilter : call to blur/blur_real failed');
   disp(command);
   disp(result);
   error('');

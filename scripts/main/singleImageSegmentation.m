@@ -1,4 +1,4 @@
-function singleImageSegmentation(noOfClasses, subjPars)
+function singleImageSegmentation(noOfClasses, subjPars, appDir)
 
 % algorithm parameters
 
@@ -68,11 +68,11 @@ flags.save = 1;
 
 % ==================================================================== %
 if (noOfClasses == 4)
-    Global_Kmeans_EM_4classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask);
+    Global_Kmeans_EM_4classes_PVs(subjPars, header, imagedata, brainmask, appDir);
 end
 
 if (noOfClasses == 5)
-    Global_Kmeans_EM_5classes_PVs(subjPars, posteriorDir, flags, header, imagedata, brainmask);
+    Global_Kmeans_EM_5classes_PVs(subjPars, header, imagedata, brainmask, appDir);
 end
 
 

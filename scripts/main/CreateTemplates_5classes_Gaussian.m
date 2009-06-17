@@ -13,11 +13,11 @@ wmT1     = single(wmSeg1);
 wmT2     = single(wmSeg2);
 outlierT = single(outlierSeg);
 
-G_csfT     = gaussianFilter(csfT, header, sigmaCSF, sigmaCSF, sigmaCSF, 'Real');
-G_gmT      = gaussianFilter(gmT, header, sigmaCortex, sigmaCortex, sigmaCortex, 'Real');
-G_wmT1     = gaussianFilter(wmT1, header, sigmaWM1, sigmaWM1, sigmaWM1, 'Real');
-G_wmT2     = gaussianFilter(wmT2, header, sigmaWM2, sigmaWM2, sigmaWM2, 'Real');
-G_outlierT = gaussianFilter(outlierT, header, sigmaOutlier, sigmaOutlier, sigmaOutlier, 'Real');
+G_csfT     = gaussianFilter(csfT, header, sigmaCSF, sigmaCSF, sigmaCSF, 'Real', appDir);
+G_gmT      = gaussianFilter(gmT, header, sigmaCortex, sigmaCortex, sigmaCortex, 'Real', appDir);
+G_wmT1     = gaussianFilter(wmT1, header, sigmaWM1, sigmaWM1, sigmaWM1, 'Real', appDir);
+G_wmT2     = gaussianFilter(wmT2, header, sigmaWM2, sigmaWM2, sigmaWM2, 'Real', appDir);
+G_outlierT = gaussianFilter(outlierT, header, sigmaOutlier, sigmaOutlier, sigmaOutlier, 'Real', appDir);
 
 
 minP = 0.02;
