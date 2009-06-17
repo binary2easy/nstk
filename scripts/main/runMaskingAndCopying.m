@@ -33,7 +33,6 @@ for i = 1:num
     
     anatomyDir   = fullfile(subjDir, anatomyDirName);
     maskDir = fullfile(subjDir, maskDirName);
-%     cd(anatomyDir);
     
     files = dir(fullfile(anatomyDir, ['*' suffix]));
     
@@ -66,12 +65,6 @@ for i = 1:num
             continue;
         end
     end
-        
-%     [data, header] = loadAnalyze(anatomyCurr, 'Grey');
-%     % Save to a short type file called withStemBrain_N3
-%     saveAnalyze(data, header, unmaskedBrainCurr, 'Grey');
-%     % Can be done by using convert in out -short
-    
     
     % Mask from template propagation.
     maskCurr          = fullfile(maskDir, maskName);
