@@ -1,7 +1,7 @@
 
 function [csfT, wmT1, wmT2, gmT, outlierT] = CreateTemplates_5classes_Gaussian(header, ...
   csfSeg, wmSeg1, wmSeg2, gmSeg, outlierSeg, ...
-  sigmaCSF, sigmaWM1, sigmaWM2, sigmaCortex, sigmaOutlier)
+  sigmaCSF, sigmaWM1, sigmaWM2, sigmaCortex, sigmaOutlier, appDir)
                 
 % Create probability templates by blurring hard label maps.
 
