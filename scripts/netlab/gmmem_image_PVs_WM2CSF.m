@@ -208,7 +208,7 @@ for n = 1:niters
 %         filename = ['segResults/segResult_gmmPVs_results' num2str(n) '.hdr' ];
 %         SaveAnalyze(uint32(results), mix.header, filename, 'Grey');
 
-        [label3D, largestComponent, results] = RegionVolumeFilter_cortex(results, mix.header, 20, nonbrainlabel);
+        [label3D, largestComponent, results] = RegionVolumeFilter_cortex(results, mix.header, nonbrainlabel);
         clear label3D largestComponent
         % change prioris
 

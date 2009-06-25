@@ -238,7 +238,7 @@ for n = 1:niters
         indexes = find(partsmask>0);
         newglobalSeg(indexes(:)) = results(indexes(:));
         
-        [label3D, largestComponent, newglobalSeg] = RegionVolumeFilter_cortex(newglobalSeg, mix.header, 20, nonbrainlabel);
+        [label3D, largestComponent, newglobalSeg] = RegionVolumeFilter_cortex(newglobalSeg, mix.header, nonbrainlabel);
         clear label3D largestComponent
         % change prioris
 
