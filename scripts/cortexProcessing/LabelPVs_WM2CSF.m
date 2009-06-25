@@ -4,17 +4,17 @@ function mix = LabelPVs_WM2CSF(mix, segResult, LabelSeg, csflabel, cortexlabel, 
 
 % get the small connected components
 
-[label3D, largestComponent, segResult] = RegionVolumeFilter_cortex(segResult, mix.header, 20, wmlabel);
+[label3D, largestComponent, segResult] = RegionVolumeFilter_cortex(segResult, mix.header, wmlabel);
 
 suspectWMPVs = zeros(size(segResult), 'uint32');
-suspectWMPVs(find(segResult == 10)) = 1;
+suspectWMPVs(segResult == 10) = 1;
 
 clear label3D largestComponent
 
 % get the suspected wmPVs
 % Previously this line did the following redundant step.
 %    suspectWMPVs(find(LabelSeg==pvlabel)) == 0;
-suspectWMPVs(find(LabelSeg == pvlabel)) = 0;
+suspectWMPVs(LabelSeg == pvlabel) = 0;
 
 % SaveAnalyze(uint32(suspectWMPVs), header, 'suspectWMPVs.hdr', 'Grey');
 

@@ -3,10 +3,10 @@ function segResult = Rectify_NonBrainNoise(segResult, csflabel, cortexlabel, wml
 
 % get the small connected components
 
-[label3D, largestComponent, segResult] = RegionVolumeFilter_cortex(segResult, header, 20, nonbrainlabel);
+[label3D, largestComponent, segResult] = RegionVolumeFilter_cortex(segResult, header, nonbrainlabel);
 
 suspectWMPVs = zeros(size(segResult), 'uint32');
-suspectWMPVs(find(segResult==10)) = 1;
+suspectWMPVs(segResult==10) = 1;
 
 clear label3D largestComponent
 
