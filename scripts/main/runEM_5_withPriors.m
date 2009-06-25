@@ -80,7 +80,7 @@ saveAnalyze(uint32(LabeledSeg), header, filename, 'Grey');
 volumeThreshold = 200;
 label = [2];
 
-[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
+[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, label);
 
 filename = fullfile(subjPars.resultDir, [prefix '_cortex_seg' suffix]);
 saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
@@ -91,7 +91,7 @@ saveAnalyze(uint32(label3D), header, filename, 'Grey');
 volumeThreshold = 200;
 label = [3 4];
 
-[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
+[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, label);
 
 filename = fullfile(subjPars.resultDir, [prefix '_wm_seg' suffix]);
 saveAnalyze(uint32(largestComponent), header, filename, 'Grey');

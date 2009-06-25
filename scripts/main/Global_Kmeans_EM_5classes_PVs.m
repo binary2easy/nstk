@@ -24,19 +24,19 @@ LabeledSeg = kmeans_label;
 % outlierlabel = 1;
 
 csfSeg = zeros(size(LabeledSeg), 'uint8');
-csfSeg(find(LabeledSeg==csflabel)) = 1;
+csfSeg(LabeledSeg==csflabel) = 1;
 
 wmSeg1 = zeros(size(LabeledSeg), 'uint8');
-wmSeg1(find(LabeledSeg==wmlabel1)) = 1;
+wmSeg1(LabeledSeg==wmlabel1) = 1;
 
 wmSeg2 = zeros(size(LabeledSeg), 'uint8');
-wmSeg2(find(LabeledSeg==wmlabel2)) = 1;
+wmSeg2(LabeledSeg == wmlabel2) = 1;
 
 gmSeg = zeros(size(LabeledSeg), 'uint8');
-gmSeg(find(LabeledSeg==cortexlabel)) = 1;
+gmSeg(LabeledSeg == cortexlabel) = 1;
 
 outlierSeg = zeros(size(LabeledSeg), 'uint8');
-outlierSeg(find(LabeledSeg==outlierlabel)) = 1;
+outlierSeg(LabeledSeg == outlierlabel) = 1;
 
 sigmaCSF = 2*header.xvoxelsize;
 sigmaWM1 = 2*header.xvoxelsize;
@@ -125,10 +125,9 @@ filename = fullfile(subjPars.resultDir, [prefix '_segResult_5classes_PVs' suffix
 saveAnalyze(uint32(LabeledSeg), header, filename, 'Grey');
 
 
-volumeThreshold = 200;
 label = [2];
 
-[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
+[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, label);
 
 filename = fullfile(subjPars.resultDir, [prefix '_cortex_seg' suffix]);
 saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
@@ -139,7 +138,7 @@ saveAnalyze(uint32(label3D), header, filename, 'Grey');
 volumeThreshold = 200;
 label = [3 4];
 
-[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, volumeThreshold, label);
+[label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, label);
 
 filename = fullfile(subjPars.resultDir, [prefix '_wm_seg' suffix]);
 saveAnalyze(uint32(largestComponent), header, filename, 'Grey');
