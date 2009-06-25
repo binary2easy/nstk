@@ -11,6 +11,9 @@ function runMaskingAndCopying(rootDir, appDir)
 disp('----------------------------------------------------');
 disp('runMaskingAndCopying');
 
+% copy kmean initialization files (name changed from upper case start)
+copyKmeansInitializationFile(rootDir)
+
 [subdirs, num] = findAllDirectory(rootDir);
 
 % Directory names common for all subjects.

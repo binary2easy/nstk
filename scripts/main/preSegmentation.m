@@ -9,9 +9,6 @@ val = 1;
 % Create directory structure. Previously 'CreateDir_Structure_NeonatalSeg'.
 createDirStructure(rootDir)
 
-% copy kmean initialization files (name changed from upper case start)
-copyKmeansInitializationFile(rootDir, fourClasses_flag, fiveClasses_flag)
-
 % ------------------------------------------------------------------------
 % perform the brain extraction and N3 correction
 % ------------------------------------------------------------------------
