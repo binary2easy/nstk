@@ -12,4 +12,4 @@
 % Proper operation of function handles seems to require an absolute path
 %   (at least for Matlab version 6.5).
 %addpath(genpath('c:/cygwin/home/mitchell/Projects/ToolboxLS/Kernel'));
-addpath(genpath('J:/vessle_utilities/LevelSet/Ian_Mitchell/ToolboxLS-1.1/Kernel'));
+addpath(genpath('/media/My Passport/work/cortex/nstk/scripts/LSToolbox/Kernel'));

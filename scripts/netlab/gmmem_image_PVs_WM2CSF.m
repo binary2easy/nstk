@@ -83,25 +83,25 @@ for n = 1:niters
     [post, act] = gmmpost_image(mix, x);
 
     % Calculate error value if needed
-    if (display | store | test)
-    prob = act.*mix.priors;
-    prob = sum(prob, 2);
-    % Error value is negative log likelihood of data
-    e = - sum(log(prob));
-    if store
-      errlog(n) = e;
-    end
-    if display > 0
-      fprintf(1, 'Cycle %4d  Error %11.6f\n', n, e);
-    end
-    if test
-      if (n > 1 & abs(e - eold) < options(3))
-        options(8) = e;
-        return;
-      else
-        eold = e;
+    if (display || store || test)
+      prob = act.*mix.priors;
+      prob = sum(prob, 2);
+      % Error value is negative log likelihood of data
+      e = - sum(log(prob));
+      if store
+        errlog(n) = e;
       end
-    end
+      if display > 0
+        fprintf(1, 'Cycle %4d  Error %11.6f\n', n, e);
+      end
+      if test
+        if (n > 1 && abs(e - eold) < options(3))
+          options(8) = e;
+          return;
+        else
+          eold = e;
+        end
+      end
     end
 
     % Adjust the new estimates for the parameters

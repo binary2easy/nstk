@@ -32,10 +32,6 @@ for ss = 1:num
     numRegion = length(i);
     seglabels = [];
     for tt = 1:numRegion
-        % PA CHANGING XY SUBSCRIPTS.
-%         y = i(tt);
-%         x = j(tt);
-%         z = k(tt);
         x = i(tt);
         y = j(tt);
         z = k(tt);
@@ -47,13 +43,10 @@ for ss = 1:num
             py = y + offsets(pp, 2); 
             pz = z + offsets(pp, 3);                
             if ( pointInROI([px py pz], [1, 1, 1], [xsize ysize zsize]) == true )
-                % PA CHANGING XY SUBSCRIPTS.
                 if (l(px, py, pz) > 0)
                     continue;
                 end
                 
-                % PA CHANGING XY SUBSCRIPTS.
-                % neighbors(index+1) = segResult(py, px, pz);
                 neighbors(index+1) = segResult(px, py, pz);
                 index = index + 1;
             end
@@ -75,7 +68,7 @@ for ss = 1:num
             numWM = numWM + length(find(seglabels==wmlabel(tt)));
         end
 
-        [maxTissue, I] = max([numGM, numCSF, numWM]);
+        [~, I] = max([numGM, numCSF, numWM]);
         if ( I == 1 )
             maxL = cortexlabel;
         end
@@ -88,7 +81,7 @@ for ss = 1:num
             maxL = wmlabel(1);
         end
         
-        segResult(find(l==ss)) = maxL;
+        segResult(l==ss) = maxL;
         
     end
 end

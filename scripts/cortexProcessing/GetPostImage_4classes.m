@@ -20,11 +20,11 @@ for i = 1:num
         continue;
     end
     
-    if ( (isempty(find(post(i,:)>1))==0) || (isempty(find(post(i,:)<0))==0) )
+    if ( any(post(i,:) > 1) || any(post(i,:) < 0) )
         maxP = max(post(i,:));
         minP = min(post(i,:));
         
-        if ( (maxP>1) | (minP<-1) )
+        if ( (maxP > 1.0000001) || (minP < -1.0000001) )
             post(i,:)
         end
         

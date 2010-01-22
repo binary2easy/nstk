@@ -13,7 +13,7 @@ segResult2 = segResult;
 num = length(wmlabel);
 if (num > 1)
     for i = 2:num
-        segResult2(find(segResult == wmlabel(i))) = wmlabel(1);
+        segResult2(segResult == wmlabel(i)) = wmlabel(1);
     end
 end
 
@@ -37,27 +37,27 @@ for k = 1:zsize
                 continue;
             end
 
-            [neighbourhood, neighbors] = GetNeighbourhood2(segResult2, header, i, j, k, neighborwidth);
+            [~, neighbors] = GetNeighbourhood2(segResult2, header, i, j, k, neighborwidth);
 
             if ( label == wmlabel )
 
                 % between csf and non-brain tissue
-                if ( (isempty(find(neighbors == csflabel))      == 0) && ...
-                     (isempty(find(neighbors == nonbrainlabel)) == 0) )
+                if ( (isempty(find(neighbors == csflabel, 1))      == 0) && ...
+                     (isempty(find(neighbors == nonbrainlabel, 1)) == 0) )
                     LabeledSeg(i, j, k) = csflabel;
                     continue;
                 end
 
                 % between csf and gm
-                if ( (isempty(find(neighbors == csflabel))    == 0) && ...
-                     (isempty(find(neighbors == cortexlabel)) == 0) )
+                if ( (isempty(find(neighbors == csflabel, 1))    == 0) && ...
+                     (isempty(find(neighbors == cortexlabel, 1)) == 0) )
                     LabeledSeg(i, j, k) = cortexlabel;
                     continue;
                 end
 
                 % between non-brain tissue and gm
-                if ( (isempty(find(neighbors == nonbrainlabel)) == 0) && ...
-                     (isempty(find(neighbors == cortexlabel))   == 0) )
+                if ( (isempty(find(neighbors == nonbrainlabel, 1)) == 0) && ...
+                     (isempty(find(neighbors == cortexlabel, 1))   == 0) )
                     LabeledSeg(i, j, k) = cortexlabel;
                     continue;
                 end
@@ -67,20 +67,20 @@ for k = 1:zsize
             if ( label == cortexlabel )
 
                 % between csf and non-brain tissue
-                if ( (isempty(find(neighbors == csflabel))      == 0) && ...
-                     (isempty(find(neighbors == nonbrainlabel)) == 0) )
+                if ( (isempty(find(neighbors == csflabel, 1))      == 0) && ...
+                     (isempty(find(neighbors == nonbrainlabel, 1)) == 0) )
                     LabeledSeg(i, j, k) = csflabel;
                     continue;
                 end
 
-                if ( (isempty(find(neighbors == csflabel)) == 0) && ...
-                     (isempty(find(neighbors == 0))        == 0) )
+                if ( (isempty(find(neighbors == csflabel, 1)) == 0) && ...
+                     (isempty(find(neighbors == 0, 1))        == 0) )
                     LabeledSeg(i, j, k) = csflabel;
                     continue;
                 end
 
-                if ( (isempty(find(neighbors == wmlabel)) == 0) && ...
-                     (isempty(find(neighbors == 0))       == 0) )
+                if ( (isempty(find(neighbors == wmlabel, 1)) == 0) && ...
+                     (isempty(find(neighbors == 0, 1))       == 0) )
                     LabeledSeg(i, j, k) = wmlabel;
                     continue;
                 end

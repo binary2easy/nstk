@@ -13,8 +13,6 @@ for i = 1:num
     nonBrain(labelvolume == nonBrainLabel(i)) = 1;
 end
 
-largestComponent = zeros(size(nonBrain),'uint8');
-
 % Find separate connected components (image proc. toolbox).  Each one is
 % assigned a different label. Using 6-neighbourhood.
 [labels, num] = bwlabeln(nonBrain, 6);
@@ -22,15 +20,6 @@ largestComponent = zeros(size(nonBrain),'uint8');
 volumes=zeros(num,1);
 
 total = xsize*ysize*zsize;
-
-% for i=1:total
-%     if (labels(i)>0)
-%         volumes(labels(i)) = volumes(labels(i)) + 1;
-%     end
-% end
-% 
-% vd = sort(volumes, 'descend');
-% % only 6 biggest will be used;
 
 for i = 1:num
   temp = labels == i;
@@ -40,12 +29,6 @@ end
 [largest, index] = max(volumes);
 
 availableVD = largest * 0.08;
-
-% for i=1:total
-%     if ((labels(i) > 0) && (volumes(labels(i)) >= largest))
-%         largestComponent(i) = 1;
-%     end
-% end
 
 largestComponent = uint8(zeros(size(labels)));
 largestComponent(labels == index) = 1;

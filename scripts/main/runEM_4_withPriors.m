@@ -86,7 +86,7 @@ filename = fullfile(subjPars.resultDir, [ prefix '_segResult_4classes_PVs' suffi
 saveAnalyze(uint32(LabeledSeg), header, filename, 'Grey');
 
 
-volumeThreshold = 200;
+% volumeThreshold = 200;
 label = [2];
 
 [label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, label);
@@ -100,7 +100,7 @@ filename = fullfile(subjPars.resultDir, [ 'cortex_seg_4classes' suffix]);
 saveAnalyze(uint32(label3D), header, filename, 'Grey');
 
 
-volumeThreshold = 200;
+% volumeThreshold = 200;
 label = [3];
 
 [label3D, largestComponent] = RegionVolumeFilter_cortex(LabeledSeg, header, label);

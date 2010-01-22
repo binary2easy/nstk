@@ -60,7 +60,7 @@ disp(['No of Classes : ' num2str(noOfClasses)]);
         lsParams.flag_inside = 0; % target surface must be inside the data0 surface
         
         InternalSurfaces_NoTopologyPreserving(subjDir, noOfClasses, appDir, lsParams);
-        
+
         clear lsParams;
         
         
