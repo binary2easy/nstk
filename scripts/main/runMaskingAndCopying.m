@@ -1,4 +1,4 @@
-function runMaskingAndCopying(rootDir, appDir)
+function runMaskingAndCopying(rootDir, appDir, subfolder)
 
 % Copies a (short type) version of the subject anatomy in the NU corrected
 % directory within the same directory.
@@ -11,10 +11,18 @@ function runMaskingAndCopying(rootDir, appDir)
 disp('----------------------------------------------------');
 disp('runMaskingAndCopying');
 
-% copy kmean initialization files (name changed from upper case start)
-copyKmeansInitializationFile(rootDir)
+if (nargin == 2)
+  % copy kmean initialization files (name changed from upper case start)
+  copyKmeansInitializationFile(rootDir)
 
-[subdirs, num] = findAllDirectory(rootDir);
+  [subdirs, num] = findAllDirectory(rootDir);
+elseif (nargin == 3)
+  % Single subfolder to process.
+  subdirs = {subfolder};
+  num = 1;
+else
+  error('runMaskingAndCopying: called with wrong number of arguments.');
+end
 
 % Directory names common for all subjects.
 anatomyDirName = 'nuCorrected';
@@ -26,7 +34,7 @@ maskName          = ['brainmask_nostem' suffix];
 unmaskedBrainName = ['withStemBrain_N3' suffix];
 maskedBrainName   = ['noStemBrain_N3' suffix];
 
-preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}'; 
+preCommand = getLDLibPathString;
 
 for i = 1:num
     
@@ -43,8 +51,8 @@ for i = 1:num
         disp('runMaskAndCopying.m : ');
         disp('More than one image in the anatomy directory : ');
         disp(['   ' anatomyDir]);
-        error('');
-        continue;
+        disp('Returning');
+        return
     end
     
     anatomyCurr       = fullfile(anatomyDir, files(1).name);
@@ -55,17 +63,14 @@ for i = 1:num
         command = [appDir '/convert "' anatomyCurr '" "' unmaskedBrainCurr '" -short'];
         
         disp(command);
-        if strcmp(getenv('OS'), 'Linux')
-          command = [preCommand ';' command];
-        end
+        command = [preCommand ';' command];
         [s, w] = system(command);
 
         if (s ~= 0)
             disp('runMaskingAndCopying : convert failed');
             disp(command);
             disp(w);
-            error('');
-            continue;
+            error('Bailing out');
         end
     end
     
@@ -81,17 +86,14 @@ for i = 1:num
         % Incorporate info from native mask to modify propagated mask.
         command = [appDir '/padding "' maskCurr '" "' maskNative '" "' maskCurr '" 0 0'];
         disp(command);
-        if strcmp(getenv('OS'), 'Linux')
-          command = [preCommand ';' command];
-        end
+        command = [preCommand ';' command];
         [s, w] = system(command);
 
         if (s ~= 0)
             disp('runMaskingAndCopying : padding failed');
             disp(command);
             disp(w);
-            error('');
-            continue;
+            error('Bailing out');
         end
     end
     
@@ -102,17 +104,14 @@ for i = 1:num
         % current subject to mask of the brain (no stem).
         command = [appDir '/padding "' anatomyCurr '" "' maskCurr '" "' maskedBrainCurr '" 0 0'];
         disp(command);
-        if strcmp(getenv('OS'), 'Linux')
-          command = [preCommand ';' command];
-        end
+        command = [preCommand ';' command];
         [s, w] = system(command);
 
         if (s ~= 0)
             disp('runMaskingAndCopying : padding failed');
             disp(command);
             disp(w);
-            error('');
-            continue;
+            error('Bailing out');
         end
     end
     

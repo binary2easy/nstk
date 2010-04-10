@@ -1,7 +1,17 @@
-function WholeDir_Segmentation_withPriors(rootDir, fourClasses_flag, fiveClasses_flag)
+function WholeDir_Segmentation_withPriors(rootDir, fourClasses_flag, fiveClasses_flag, ...
+  subfolder)
 
-cd(rootDir);
-[subdirs, num] = findAllDirectory(rootDir);
+if (nargin == 3)
+  cd(rootDir);
+  [subdirs, num] = findAllDirectory(rootDir);
+elseif (nargin == 4)
+  % Single subfolder to process.
+  subdirs = {subfolder};
+  num = 1;  
+else
+  error('WholeDir_Segmentation: called with wrong number of arguments.');  
+end
+
 
 maskDirName    = 'brainMask';
 anatomyDirName = 'nuCorrected';
@@ -20,7 +30,7 @@ for i = 1:num
 
     subjDir = fullfile(rootDir, subdirs{i});
 %     cd(subjDir);
-    disp(subjDir);
+    disp(['WholeDir_Segmentation_withPriors ' subjDir ]);
         
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Check if no work needs doing.
@@ -29,18 +39,21 @@ for i = 1:num
 
     if ((fourClasses_flag == 1) && (fiveClasses_flag == 0))
         if (numel(files4) > 0)
+          disp('WholeDir_Segmentation_withPriors : 4 class result already exists.');
             continue;
         end
     end
     
     if ((fourClasses_flag == 0) && (fiveClasses_flag == 1))
         if (numel(files5) > 0)
+          disp('WholeDir_Segmentation_withPriors : 5 class result already exists.');
             continue;
         end
     end
     
     if ((fourClasses_flag == 1) && (fiveClasses_flag == 1))
         if ((numel(files4) > 0) && (numel(files5) > 0))
+          disp('WholeDir_Segmentation_withPriors : All results already exist.');
             continue;
         end
     end
