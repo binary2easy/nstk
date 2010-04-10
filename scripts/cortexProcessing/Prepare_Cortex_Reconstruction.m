@@ -184,10 +184,8 @@ if (strcmp(type, 'Real'))
   command = [command ' -real '];
 end
 
-if strfind(computer, 'GLNX') % Linux
-  command = [preCommand ';' command];
-end
 disp(command);
+command = [preCommand ';' command];
 
 [status, result] = system(command);
 

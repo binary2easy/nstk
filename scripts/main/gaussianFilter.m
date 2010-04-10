@@ -20,11 +20,10 @@ end
 sigma = (sigmaX + sigmaY + sigmaZ) / 3.0;
 
 command = [command ' ' randstr ' ' randstr ' ' num2str(sigma)];
-
+disp(command);
 preCommand = getLDLibPathString;
 command = [preCommand ';' command];
 
-disp(command);
 [status, result] = system(command);
 
 if (status ~= 0)
