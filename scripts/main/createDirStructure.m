@@ -4,19 +4,16 @@ saveDir = pwd;
 
 cd(rootDir)
 
-path_abo = fullfile(rootDir, '*.nii.gz' );
-indir = dir(path_abo);
-num = length(indir);
+dirString = fullfile(rootDir, '*.nii.gz' );
+filesFound = dir(dirString);
+num = length(filesFound);
+
 if ( num == 0 )
     cd (saveDir);
     disp('createDirStructure.m');
     disp('   Found no image files in directory, assuming all have been copied already');
     disp(rootDir);
-%    error(['Empty directory ' rootDir ' : Quitting']);
 end
-
-% path_abo2 = fullfile(rootDir, '*.img' );
-% indir2 = dir(path_abo2);(
 
 disp('Creating directory for ')
 
@@ -24,7 +21,7 @@ for i = 1:num
     
     cd(rootDir)
     
-    nameS = strrep(indir(i).name, '.nii.gz', '');
+    nameS = strrep(filesFound(i).name, '.nii.gz', '');
     
     if (findstr('-nu', nameS))
         continue
@@ -36,7 +33,7 @@ for i = 1:num
         continue
     end
     
-    filename = fullfile(rootDir, indir(i).name);
+    filename = fullfile(rootDir, filesFound(i).name);
 %     [pathstrS,nameS,extS,versnT] = fileparts(filename);
     
 %     filename2 = fullfile(rootDir, indir2(i).name);
@@ -57,9 +54,8 @@ for i = 1:num
     mkdir('segs');
     mkdir('brainMask');
     mkdir('nuCorrected');
-    mkdir('backup');
     mkdir('cortexRecon');
-    mkdir('dofs');
+    mkdir('priors');
     
     movefile(filename, [rootDir '/' nameS]);
 %    movefile(filename, fullfile(rootDir, nameS, [nameS extS]));
