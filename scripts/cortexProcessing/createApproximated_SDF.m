@@ -13,11 +13,9 @@ command = [appDir '/dmap'];
 command = [command ' "' randstr '"'];
 command = [command ' "' randstr '"'];
 
-preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}' ;
-if strcmp(getenv('OS'), 'Linux')
-  command = [preCommand ';' command];
-end
 disp(command);
+preCommand = getLDLibPathString;
+command = [preCommand ';' command];
 
 [status, result] = system(command);
 

@@ -18,10 +18,8 @@ command = [command ' -bspline'];
 
 disp(command);
 
-preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
-if strcmp(getenv('OS'), 'Linux')
-  command = [preCommand ';' command];
-end
+preCommand = getLDLibPathString;
+command = [preCommand ';' command];
 
 [s, w] = system(command);
 

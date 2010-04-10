@@ -27,10 +27,8 @@ if (~exist(dofout_rreg))
         command = [command ' -dofin "' dofin_rreg '"'];
     end
     
-    preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
-    if strcmp(getenv('OS'), 'Linux')
-      command = [preCommand ';' command];
-    end
+    preCommand = getLDLibPathString;
+    command = [preCommand ';' command];
     [s, w] = system(command);
     
     if (s ~= 0)
@@ -63,10 +61,8 @@ if (~exist(dofout_areg))
     command = [command ' -dofout "' dofout_areg '"'];
     command = [command ' -dofin "' dofin_areg '"'];
 
-    preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
-    if strcmp(getenv('OS'), 'Linux')
-      command = [preCommand ';' command];
-    end
+    preCommand = getLDLibPathString;
+    command = [preCommand ';' command];
     [s, w] = system(command);
     
     if (s ~= 0)

@@ -158,11 +158,9 @@ command = [command ' "' outputName '"'];
 command = [command ' -Rx1 ' num2str(rx1) ' -Ry1 ' num2str(ry1) ' -Rz1 ' num2str(rz1)];
 command = [command ' -Rx2 ' num2str(rx2) ' -Ry2 ' num2str(ry2) ' -Rz2 ' num2str(rz2)];
 
-preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}'; 
-if strcmp(getenv('OS'), 'Linux')
-  command = [preCommand ';' command];
-end
 disp(command);
+preCommand = getLDLibPathString;
+command = [preCommand ';' command];
 
 [status, result] = system(command);
 
@@ -186,7 +184,7 @@ if (strcmp(type, 'Real'))
   command = [command ' -real '];
 end
 
-if strcmp(getenv('OS'), 'Linux')
+if strfind(computer, 'GLNX') % Linux
   command = [preCommand ';' command];
 end
 disp(command);

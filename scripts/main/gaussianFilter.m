@@ -21,10 +21,9 @@ sigma = (sigmaX + sigmaY + sigmaZ) / 3.0;
 
 command = [command ' ' randstr ' ' randstr ' ' num2str(sigma)];
 
-preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}'; 
-if strcmp(getenv('OS'), 'Linux')
-  command = [preCommand ';' command];
-end
+preCommand = getLDLibPathString;
+command = [preCommand ';' command];
+
 disp(command);
 [status, result] = system(command);
 

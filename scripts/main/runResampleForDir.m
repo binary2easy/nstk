@@ -60,10 +60,9 @@ for i = 1:num
     command = [command ' ' num2str(resolution(3), '%10.8f')];
     command = [command ' -bspline'];
     
-    preCommand = 'setenv LD_LIBRARY_PATH /usr/lib:/lib:{LD_LIBRARY_PATH}';
-    if strcmp(getenv('OS'), 'Linux')
-      command = [preCommand ';' command];
-    end
+    preCommand = getLDLibPathString;
+    command = [preCommand ';' command];
+
     [s, w] = system(command);
 
     if (s ~= 0)
