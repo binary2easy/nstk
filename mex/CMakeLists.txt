@@ -36,6 +36,9 @@ FIND_PACKAGE(VTK)
 # Add VTK
 INCLUDE(${CMAKE_ROOT}/Modules/FindVTK.cmake)
 
+#SET(VTK_FOUND 1)
+#INCLUDE(${VTK_DIR}/VTKConfig.cmake)
+
 IF (VTK_FOUND)
   ADD_DEFINITIONS(-DHAS_VTK)
 
@@ -50,6 +53,12 @@ IF (VTK_FOUND)
   LINK_LIBRARIES(vtkRendering vtkCommon vtkexpat
           vtkFiltering vtkfreetype vtkftgl vtkGraphics
           vtkHybrid vtkImaging vtkIO)
+
+  MESSAGE("vtk found")
+
+ELSE (VTK_FOUND)
+
+  MESSAGE("VTK NOT FOUND : Please set VTK directory manually")
 
 ENDIF (VTK_FOUND)
 
