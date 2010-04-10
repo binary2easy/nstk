@@ -1,6 +1,15 @@
-function run_kmeans_all(rootDir, fourClasses_flag, fiveClasses_flag)
+function run_kmeans_all(rootDir, fourClasses_flag, fiveClasses_flag, subfolder)
 
-[subdirs, num] = findAllDirectory(rootDir);
+if (nargin == 3)
+  [subdirs, num] = findAllDirectory(rootDir);
+elseif (nargin == 4)
+  % Single subfolder to process.
+  subdirs = {subfolder};
+  num = 1;  
+else
+  error('run_kmeans_all: called with wrong number of arguments.');
+end
+
 
 maskDirName    = 'brainMask';
 anatomyDirName = 'nuCorrected';
