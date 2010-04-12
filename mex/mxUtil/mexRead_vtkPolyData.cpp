@@ -57,6 +57,7 @@ void copyFaces(vtkCellArray *src, vtkCellArray *dest){
 }
 void usage(){
   cout << " Usage: " << endl;
+  cout << "    [V, F]    = Read_vtkPolyData(FILE)" << endl;
   cout << "    [V, F, S] = Read_vtkPolyData(FILE)" << endl;
   cout << "    [V, F, S, Snames] = Read_vtkPolyData(FILE)" << endl;
   cout << "      V = vertices." << endl;
@@ -73,7 +74,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 {
 
   int i, j, ind;
-  int scalarNamesRequired = 0;
+  int scalarsRequired = 0, scalarNamesRequired = 0;
   
   double pt[3];
   vtkIdType npts = 0;
@@ -85,11 +86,14 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
     mexErrMsgTxt("One input argument required.");
   }
 
-  if (nlhs < 3){
+  if (nlhs < 2 || nlhs > 4){
     usage();
-    mexErrMsgTxt("Three or four output arguments required.");
+    mexErrMsgTxt("Two, three or four output arguments required.");
   }
 
+  if (nlhs > 2)
+    scalarsRequired = 1;
+  
   if (nlhs == 4)
     scalarNamesRequired = 1;
 
@@ -116,6 +120,7 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
     vtkFloatArray *scalars = (vtkFloatArray*) polydata->GetPointData()->GetArray(i);
     
     if (scalars->GetNumberOfComponents() != 1){
+      // Currently not implemented to read vector valued per-vertex features.
       continue;
     }
     noOfScalarArrays++;
@@ -142,20 +147,22 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
   // Array with a row per set of scalars.
   mwSize *sdims = new mwSize[2];
   sdims[0] = noOfScalarArrays;
+  float *scalarsOut;
   
-  if (noOfScalarArrays > 0)
-    sdims[1] = polydata->GetNumberOfPoints();
-  else
-    sdims[1] = 0;
-  
-  plhs[2] = mxCreateNumericArray(2, sdims, mxSINGLE_CLASS, mxREAL);
-  float *scalarsOut = static_cast<float*>(mxGetData(plhs[2]));
+  if (scalarsRequired == 1){
+    if (noOfScalarArrays > 0)
+      sdims[1] = polydata->GetNumberOfPoints();
+    else
+      sdims[1] = 0;
 
-
+    plhs[2] = mxCreateNumericArray(2, sdims, mxSINGLE_CLASS, mxREAL);
+    scalarsOut = static_cast<float*>(mxGetData(plhs[2]));
+  }
 
   cout << "No of points        : " << polydata->GetNumberOfPoints() << endl;
   cout << "No of faces         : " << faces->GetNumberOfCells() << endl;
-  cout << "No of scalar arrays : " << noOfScalarArrays << endl;
+  if (scalarsRequired == 1)
+    cout << "No of scalar arrays : " << noOfScalarArrays << endl;
   
   mwIndex sub[2];
   
@@ -196,24 +203,26 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
   // Scalars:
   
   int scalarInd = 0;
-  
-  for (i = 0; i < polydata->GetPointData()->GetNumberOfArrays(); i++ ){
-    vtkFloatArray *scalars = (vtkFloatArray*) polydata->GetPointData()->GetArray(i);
-    
-    if (scalars->GetNumberOfComponents() != 1){
-      continue;
-    }
-    sub[0] = scalarInd;
-    scalarInd++;
 
-    for (j = 0; j < scalars->GetNumberOfTuples(); ++j){
-      sub[1] = j;
-      ind = mxCalcSingleSubscript(plhs[2], 2, sub);
-      scalarsOut[ind] = scalars->GetTuple1(j);
+  if (scalarsRequired == 1){
+    for (i = 0; i < polydata->GetPointData()->GetNumberOfArrays(); i++ ){
+      vtkFloatArray *scalars = (vtkFloatArray*) polydata->GetPointData()->GetArray(i);
+
+      if (scalars->GetNumberOfComponents() != 1){
+        continue;
+      }
+      sub[0] = scalarInd;
+      scalarInd++;
+
+      for (j = 0; j < scalars->GetNumberOfTuples(); ++j){
+        sub[1] = j;
+        ind = mxCalcSingleSubscript(plhs[2], 2, sub);
+        scalarsOut[ind] = scalars->GetTuple1(j);
+      }
     }
   }
   
-  if (scalarNamesRequired == 1){
+  if (scalarsRequired == 1 && scalarNamesRequired == 1){
     sdims[0] = noOfScalarArrays;
     sdims[1] = 1;
     plhs[3] = mxCreateCellArray(2, sdims);
