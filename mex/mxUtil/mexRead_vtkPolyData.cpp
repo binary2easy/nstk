@@ -67,7 +67,7 @@ void usage(){
   cout << "    Currently only single component scalars are read." << endl;
   cout << "    Vector valued per-vertex features not possible." << endl;
   cout << endl;
-  
+
 }
 
 void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
@@ -75,66 +75,73 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 
   int i, j, ind;
   int scalarsRequired = 0, scalarNamesRequired = 0;
-  
+
   double pt[3];
   vtkIdType npts = 0;
   vtkIdType *ptIds;
-  
+
+
   /* Check for proper number of arguments */
   if (nrhs != 1){
     usage();
     mexErrMsgTxt("One input argument required.");
   }
 
+
   if (nlhs < 2 || nlhs > 4){
     usage();
     mexErrMsgTxt("Two, three or four output arguments required.");
+
   }
+
+
+
 
   if (nlhs > 2)
     scalarsRequired = 1;
-  
+
   if (nlhs == 4)
     scalarNamesRequired = 1;
 
-
   input_name =  mxArrayToString(prhs[0]);
+
   cout << "Input: " << input_name << endl;
   cout << "No. of args : " << nlhs << " " << nrhs << endl;
-  
+
   vtkPolyData *polydata = vtkPolyData::New();
   vtkPolyDataReader *reader = vtkPolyDataReader::New();
-  
+
   reader->SetFileName(input_name);
   reader->Modified();
   reader->Update();
   polydata = reader->GetOutput();
   polydata->Update();
-  
+
   vtkCellArray* faces = vtkCellArray::New();
   copyFaces(polydata->GetPolys(), faces);
-  
+
   int noOfScalarArrays = 0;
-  
+
   for (i = 0; i < polydata->GetPointData()->GetNumberOfArrays(); i++ ){
     vtkFloatArray *scalars = (vtkFloatArray*) polydata->GetPointData()->GetArray(i);
-    
+
     if (scalars->GetNumberOfComponents() != 1){
       // Currently not implemented to read vector valued per-vertex features.
       continue;
     }
     noOfScalarArrays++;
   }
-  
+
+
   // Output arguments.
-  
-  // Array with 3 x no of points for vertex locations. 
+
+  // Array with 3 x no of points for vertex locations.
   mwSize *vdims = new mwSize[2];
   vdims[0] = 3;
   vdims[1] = polydata->GetNumberOfPoints();
 
   plhs[0] = mxCreateNumericArray(2, vdims, mxSINGLE_CLASS, mxREAL);
-  float* vertices = static_cast<float*>(mxGetData(plhs[0]));
+  real32_T* vertices = static_cast<real32_T*>(mxGetData(plhs[0]));
 
   // Array with 3 rows to represent triangular faces.
   mwSize *fdims = new mwSize[2];
@@ -142,13 +149,13 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
   fdims[1] = faces->GetNumberOfCells();
 
   plhs[1] = mxCreateNumericArray(2, fdims, mxUINT32_CLASS, mxREAL);
-  int *facesOut = static_cast<int*>(mxGetData(plhs[1]));
-  
+  int32_T *facesOut = static_cast<int32_T*>(mxGetData(plhs[1]));
+
   // Array with a row per set of scalars.
   mwSize *sdims = new mwSize[2];
   sdims[0] = noOfScalarArrays;
-  float *scalarsOut;
-  
+  real32_T *scalarsOut;
+
   if (scalarsRequired == 1){
     if (noOfScalarArrays > 0)
       sdims[1] = polydata->GetNumberOfPoints();
@@ -156,18 +163,19 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
       sdims[1] = 0;
 
     plhs[2] = mxCreateNumericArray(2, sdims, mxSINGLE_CLASS, mxREAL);
-    scalarsOut = static_cast<float*>(mxGetData(plhs[2]));
+    scalarsOut = static_cast<real32_T*>(mxGetData(plhs[2]));
   }
+
 
   cout << "No of points        : " << polydata->GetNumberOfPoints() << endl;
   cout << "No of faces         : " << faces->GetNumberOfCells() << endl;
   if (scalarsRequired == 1)
     cout << "No of scalar arrays : " << noOfScalarArrays << endl;
-  
+
   mwIndex sub[2];
-  
+
   // Vertices:
-  
+
   for (i = 0; i < polydata->GetNumberOfPoints(); i++){
     sub[1] = i;
 
@@ -179,19 +187,19 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
       vertices[ind] = pt[j];
     }
   }
-  
+
   // Faces:
-  
+
   faces->InitTraversal();
   for (i = 0; i < faces->GetNumberOfCells(); ++i){
     sub[1] = i;
     faces->GetNextCell(npts, ptIds);
-    
+
     if (npts != 3){
-      cerr << "Only implemented for triangle surfaces." << endl;
-      exit(1);
+      cerr << "Only implemented for triangle surfaces, skipping face " << i << endl;
+      continue;
     }
-    
+
     for (j = 0; j < npts; ++j){
       sub[0] = j;
       ind = mxCalcSingleSubscript(plhs[1], 2, sub);
@@ -199,9 +207,9 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
       facesOut[ind] = ptIds[j] + 1;
     }
   }
-  
+
   // Scalars:
-  
+
   int scalarInd = 0;
 
   if (scalarsRequired == 1){
@@ -221,27 +229,27 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
       }
     }
   }
-  
+
   if (scalarsRequired == 1 && scalarNamesRequired == 1){
     sdims[0] = noOfScalarArrays;
     sdims[1] = 1;
     plhs[3] = mxCreateCellArray(2, sdims);
-    
+
     scalarInd = 0;
     for (i = 0; i < polydata->GetPointData()->GetNumberOfArrays(); i++){
       vtkFloatArray *scalars = (vtkFloatArray*) polydata->GetPointData()->GetArray(i);
       if (scalars->GetNumberOfComponents() != 1){
         continue;
       }
-      
+
       cout << "Returning scalar name " << 1 + scalarInd << " : " << scalars->GetName() << endl;
-      
+
       mxSetCell(plhs[3], scalarInd, mxCreateString(scalars->GetName()));
       scalarInd++;
     }
   }
-  
-  
+
+
   return;
 
 }
