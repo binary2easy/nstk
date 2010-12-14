@@ -21,7 +21,7 @@ typedef int mwSize;
 #endif
 
 char *output_name = NULL;
-char *scalar_name = NULL;
+char *vector_name = NULL;
 
 void usage(){
   mexPrintf("\n   Usage: \n");
@@ -215,10 +215,10 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
         mexErrMsgTxt("Scalar names must be strings.");
       }
 
-      scalar_name = mxArrayToString(cell_element_ptr);
-      cout << "  " << i + 1 << " " << scalar_name << endl;
+      vector_name = mxArrayToString(cell_element_ptr);
+      cout << "  " << i + 1 << " " << vector_name << endl;
       
-      scalars[i]->SetName(scalar_name);
+      scalars[i]->SetName(vector_name);
     }
     
     

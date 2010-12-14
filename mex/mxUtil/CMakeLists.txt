@@ -10,6 +10,8 @@ ADD_LIBRARY(Read_vtkPolyData SHARED ../include/mexExport.h mexRead_vtkPolyData.c
 
 ADD_LIBRARY(Write_vtkPolyData SHARED ../include/mexExport.h mexWrite_vtkPolyData.cpp)
 
+ADD_LIBRARY(Write_vtkPolyDataWithVectors SHARED ../include/mexExport.h mexWrite_vtkPolyDataWithVectors.cpp)
+
 # ADD_LIBRARY(LabelPVs_Seg_gmm_Local_MEX SHARED ../include/mexExport.h LabelPVs_Seg_gmm_Local_dllcreate.cpp)
 # ADD_LIBRARY(LabelPVs_Seg_gmm_atlas_Global_MEX SHARED ../include/mexExport.h LabelPVs_Seg_gmm_atlas_Global_dllcreate.cpp)
 # ADD_LIBRARY(LabelPVs_Seg_gmm_atlas_Local_MEX SHARED ../include/mexExport.h LabelPVs_Seg_gmm_atlas_Local_dllcreate.cpp)
