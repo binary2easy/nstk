@@ -56,6 +56,7 @@ for i = 1:num
     mkdir('nuCorrected');
     mkdir('cortexRecon');
     mkdir('priors');
+    mkdir('dofs');
     
     movefile(filename, [rootDir '/' nameS]);
 %    movefile(filename, fullfile(rootDir, nameS, [nameS extS]));
