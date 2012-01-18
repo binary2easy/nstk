@@ -1,33 +1,44 @@
-function [kmeansLabels, kmeansHeader] = run_kmeans(outputLabelsName, noOfClasses, centresFile, pars)
+function [kmeansLabels, imageHeader] = run_kmeans(outputLabelsName, noOfClasses, centresFile, pars)
 
-% Previously called Perform_Kmeans
+outputFilename = fullfile(pars.resultDir, outputLabelsName);
 
-filename = fullfile(pars.resultDir, outputLabelsName);
-if exist(filename, 'file');
+if isfield(pars, 'clobber') && pars.clobber == 1
+  clobber = 1;
+else
+  clobber = 0;
+end
+
+if exist(outputFilename, 'file') && clobber == 0
   disp('run_kmeans:');
-  disp(['  File present: ' filename]);
+  disp(['  File present: ' outputFilename]);
   disp('  Returning');
   return;
 end
 
-% Replaced a variable called TryNumber:
-replicates = 8;
+if isfield(pars, 'replicates')
+  replicates = pars.replicates;
+else
+  % default
+  replicates = 8;
+end
 
-[brainmask, maskHeader]  = loadAnalyze(pars.brainMaskfile,'Grey');
-[imagedata, imageHeader] = loadAnalyze(pars.imagefile,'Grey');
+% Read in data
+[brainmask, ~]  = loadAnalyze(pars.brainMaskfile, 'Grey');
+[imagedata, imageHeader] = loadAnalyze(pars.imagefile,     'Grey');
 
-[data, indices] = kmean_init(imagedata, imageHeader, brainmask);
+data = single(imagedata(brainmask > 0));
 
 % Check if initial centroids are available in a file.
 if ( exist(centresFile, 'file') )
     initialCentres = readKmeanCentres(centresFile, noOfClasses); 
 else
   % No file, try a guess some good centres.
-  centiles = [];
   if (noOfClasses == 4)
     centiles = [25 50 75 90];
   elseif (noOfClasses == 5)
     centiles = [25 50 70 80 90];
+  else
+    centiles = linspace(100/noOfClasses, 100 - (100/noOfClasses), noOfClasses);
   end  
 
   initialCentres = prctile(data, centiles);
@@ -36,11 +47,7 @@ end
 disp('run_kmeans.m:  Using the following initial Centres ... ');
 disp(initialCentres);
 
-%  A hack value to apply appropriate noise to the centres for kmeans
-%  repetitions
 scale = getScaleForCentrePerturbation(initialCentres);
-
-
 
 
 if isempty(initialCentres)
@@ -72,32 +79,25 @@ else
 end
 
 % Save results.
-kmeansLabels = zeros(size(imagedata), 'uint32');
-[ndata, ndim] = size(indices);
 
-for i = 1:ndata
-    kmeansLabels(indices(i, 1), indices(i, 2), indices(i, 3)) = IDX(i);
-end
+kmeansLabels = brainmask;
+kmeansLabels(brainmask > 0) = IDX;
 
-filename = fullfile(pars.resultDir, outputLabelsName);
-kmeansHeader = imageHeader;
-
-saveAnalyze(kmeansLabels, kmeansHeader, filename, 'Grey' );
+saveAnalyze(kmeansLabels, imageHeader, outputFilename, 'Grey' );
 
 return
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 function scale = getScaleForCentrePerturbation(centres)
+%  A hack value to apply appropriate scale for noise applied to the centres
+%  for different kmeans repetitions
 
-diffs = zeros(numel(centres) - 1, 1);
 sortedCentres = sort(centres);
-lastIndex = numel(centres) - 1;
-for i = 1:lastIndex
-    diffs(i) = sortedCentres(i + 1) - sortedCentres(i);
-end
 
-diffs = abs(diffs);
+diffs = sortedCentres(2:end) - sortedCentres(1:end-1);
 
-scale = sum(diffs) / numel(centres);
+scale = 0.5 * mean(diffs);
 
 return
 
