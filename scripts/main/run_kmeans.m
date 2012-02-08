@@ -38,7 +38,8 @@ else
   elseif (noOfClasses == 5)
     centiles = [25 50 70 80 90];
   else
-    centiles = linspace(100/noOfClasses, 100 - (100/noOfClasses), noOfClasses);
+    minCentile = 100 / (1+noOfClasses);
+    centiles = minCentile * (1:noOfClasses);
   end  
 
   initialCentres = prctile(data, centiles);
