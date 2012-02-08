@@ -38,7 +38,7 @@ origin = 0.5 * (dims + ones(size(dims))) ;
 nii = make_nii(data, pixdims, origin, datatype);
 
 % Writing to nii?
-if findstr('.nii', analyzename)
+if strfind(analyzename, '.nii')
     % Have sensible qform or sform info?
     if (header.nii.original.hdr.hist.qform_code || header.nii.original.hdr.hist.sform_code)
         % restore header.
@@ -72,7 +72,7 @@ if (~isempty(rot_orient))
 end
 
 
-if (findstr('.gz',analyzename))
+if (strfind(analyzename, '.gz'))
     % Prepare for a bit of name-mangling in save_nii
     analyzename = strrep(analyzename,'.gz','');
     save_nii(nii, analyzename);
