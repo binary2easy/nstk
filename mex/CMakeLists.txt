@@ -1,43 +1,72 @@
 #
-PROJECT(mexCompiler)
+#
+PROJECT(nstkMex)
+#
+#
 
-# public settings
-ADD_DEFINITIONS( -DMATLAB_MEX_FILE )
 
-SET(EXECUTABLE_OUTPUT_PATH ${mexCompiler_BINARY_DIR}/bin CACHE STRING
+cmake_minimum_required(VERSION 2.4)
+
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
+
+
+############################################
+# Project specific stuff:
+
+SET(EXECUTABLE_OUTPUT_PATH ${nstkMex_BINARY_DIR}/bin CACHE STRING
   "Where to put the executables")
-SET(LIBRARY_OUTPUT_PATH ${mexCompiler_BINARY_DIR}/lib CACHE STRING
+SET(LIBRARY_OUTPUT_PATH ${nstkMex_BINARY_DIR}/lib CACHE STRING
   "Where to put the libraries")
 
-OPTION(BUILD_SHARED_LIBS "Build shared libraries." On)
-OPTION(BUILD_SHARED "Build shared library" On)
+OPTION(BUILD_SHARED_LIBS "Build shared libraries." ON)
+OPTION(BUILD_SHARED "Build shared library" ON)
 
-# G:/programs/MATLAB/R2008a/extern
-SET(MATLAB_DIRECTORY /usr/local/matlab/
-   CACHE STRING "Where the MATLAB is installed")
 
-INCLUDE_DIRECTORIES(${MATLAB_DIRECTORY}/extern/include)
+INCLUDE_DIRECTORIES( ${nstkMex_SOURCE_DIR}/include)
+
+
+SUBDIRS(mxUtil)
+
+
+############################################
+# Matlab stuff:
+
+SET( MATLAB_ROOT NOT_FOUND CACHE PATH  "Matlab Dir")
+
+IF( ${MATLAB_ROOT} STREQUAL "NOT_FOUND")
+
+    MESSAGE(FATAL_ERROR
+      "Cannot build without MATLAB.  Please set MATLAB_ROOT.")
+
+ENDIF()
+
+
+SET( MATLAB_INCLUDE_DIR ${MATLAB_ROOT}/extern/include )
+
+INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
 
 # Libraries for linking 
-LINK_DIRECTORIES( ${MATLAB_DIRECTORY}/bin/glnx86  )
-# ${MATLAB_DIRECTORY}/lib/win32/microsoft
-
-
+IF(APPLE)
+  LINK_DIRECTORIES( ${MATLAB_ROOT}/bin/maci64  )
+ENDIF(APPLE)
+  
 # MATLAB libraries
-# LINK_LIBRARIES(libmx libmex libmat)
 LINK_LIBRARIES(mx mex mat)
 
-# project directory
-INCLUDE_DIRECTORIES( ${mexCompiler_SOURCE_DIR}/include)
+# Not sure how much this is needed.
+ADD_DEFINITIONS( -DMATLAB_MEX_FILE )
 
-# # first to find VTK
+
+############################################
+
+
+# # Now to find VTK
 FIND_PACKAGE(VTK)
 
 # Add VTK
 INCLUDE(${CMAKE_ROOT}/Modules/FindVTK.cmake)
-
-#SET(VTK_FOUND 1)
-#INCLUDE(${VTK_DIR}/VTKConfig.cmake)
 
 IF (VTK_FOUND)
   ADD_DEFINITIONS(-DHAS_VTK)
@@ -54,59 +83,55 @@ IF (VTK_FOUND)
           vtkFiltering vtkfreetype vtkftgl vtkGraphics
           vtkHybrid vtkImaging vtkIO)
 
-  MESSAGE("vtk found")
-
 ELSE (VTK_FOUND)
 
   MESSAGE("VTK NOT FOUND : Please set VTK directory manually")
 
 ENDIF (VTK_FOUND)
 
-# DITK
+############################################
 
-SET(DITK_DIRECTORY /home/pa100/shared-data/Users/paul/work/project
-        CACHE STRING "Where the DITK is installed")
+# # IRTK
 
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/recipes/include)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/common++/include)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/geometry++/include)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/image++/include)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/contrib++/include)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/nifti/niftilib)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/nifti/znzlib)
+# SET(IRTK_DIRECTORY NOT_FOUND
+#         CACHE PATH "Where the IRTK is installed")
 
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/packages/transformation/include)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/packages/registration/include)
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/packages/segmentation/include)
+# IF( ${IRTK_DIRECTORY} STREQUAL "NOT_FOUND")
 
-INCLUDE_DIRECTORIES( ${DITK_DIRECTORY}/packages/contrib/include)
+#     MESSAGE(FATAL_ERROR
+#       "Cannot build without IRTK.  Please set IRTK_DIRECTORY.")
+# ENDIF()
 
-SET(DITK_LIB_DIRECTORY ${DITK_DIRECTORY}/linux/lib
-       CACHE STRING "Where the DITK Library files are installed")
-
-LINK_DIRECTORIES(${DITK_LIB_DIRECTORY})
-
-LINK_LIBRARIES(common++ contrib++ geometry++ image++
-  niftiio recipes registration++
-  segmentation++ transformation++ znz)
-
-# INCLUDE_DIRECTORIES(G:/pa100/zlib123-dll/include)
-# LINK_DIRECTORIES(G:/pa100/zlib123-dll/lib)
-# LINK_LIBRARIES(zdll)
-
-# sub directories
+# SET(IRTK_BUILD_DIRECTORY_SUFFIX "build" CACHE STRING "The directory beneath the IRTK folder where the build is")
 
 
-SUBDIRS(mxUtil)
-# SUBDIRS(BSpline_Unser_implementation)
-# SUBDIRS(vtk_programs)
-# SUBDIRS(vtk_programs_withDITK)
-# SUBDIRS(gridding)
-# SUBDIRS(ems_MRF)
-# SUBDIRS(speedup)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/recipes/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/common++/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/geometry++/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/image++/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/contrib++/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/nifti/niftilib)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/nifti/znzlib)
+
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/transformation/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/registration/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/segmentation/include)
+# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/contrib/include)
+
+# SET(IRTK_LIB_DIRECTORY ${IRTK_DIRECTORY}/${IRTK_BUILD_DIRECTORY_SUFFIX}/lib
+#        CACHE STRING "Where the IRTK Library files are installed")
+
+# LINK_DIRECTORIES(${IRTK_LIB_DIRECTORY})
+
+# LINK_LIBRARIES(common++ contrib++ geometry++ image++
+#   niftiio recipes registration++
+#   segmentation++ transformation++ znz)
 
 
-IF (WIN32)
+############################################
+
+
+# IF (WIN32)
 #   SET (CMAKE_SHARED_LINKER_FLAGS_RELEASE /EXPORT:mexFunction CACHE
 #     STRING "Flags used by the linker during the creation of dll's.")
-ENDIF (WIN32)
+# ENDIF (WIN32)
