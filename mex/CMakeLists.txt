@@ -47,11 +47,32 @@ SET( MATLAB_INCLUDE_DIR ${MATLAB_ROOT}/extern/include )
 
 INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
 
-# Libraries for linking 
+# Libraries for linking
+
+SET(BITNESS 32)
+
+IF( ${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+  SET(BITNESS 64)
+ENDIF()
+
 IF(APPLE)
-  LINK_DIRECTORIES( ${MATLAB_ROOT}/bin/maci64  )
+  IF ( ${BITNESS} EQUAL 64 )
+    LINK_DIRECTORIES( ${MATLAB_ROOT}/bin/maci64  )
+  ELSE( ${BITNESS} EQUAL 64 )
+    MESSAGE(FATAL_ERROR
+      "Macintosh 32 bit unsupported.")
+  ENDIF( ${BITNESS} EQUAL 64 )
 ENDIF(APPLE)
-  
+
+IF( ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  IF ( ${BITNESS} EQUAL 64 )
+    LINK_DIRECTORIES( ${MATLAB_ROOT}/bin/glnxa64 )
+  ELSE( ${BITNESS} EQUAL 64 )
+    LINK_DIRECTORIES( ${MATLAB_ROOT}/bin/glnx86 )
+  ENDIF( ${BITNESS} EQUAL 64 )
+ENDIF()
+
+
 # MATLAB libraries
 LINK_LIBRARIES(mx mex mat)
 

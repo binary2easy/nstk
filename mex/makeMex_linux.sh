@@ -44,14 +44,13 @@ do
     for f in $fileList
     do
 	cp $f $tmp
-	# Replace the build tool
-	sed -i -e 's|.*c\+\+|\/Applications\/MATLAB_R2011b.app\/bin\/mex|' $tmp
+	# # Replace the build tool
+	sed -i -e 's|^.*c++|\/usr\/lib\/matlab\/R2011b\/bin\/mex|' $tmp
 	sed -i -e 's/\-Wl,[^ ]* //g' $tmp
-	sed -i -e 's/\-install_name [^ ]* //g'  $tmp
-	sed -i -e 's/lib\([^\/]*\)\.dylib/\1/g'  $tmp
-	sed -i -e 's/\.dylib//g' $tmp
-	sed -i -e 's/\-dynamiclib//g' $tmp 
-	sed -i -e 's/\-framework [^ ]* //g' $tmp
+	sed -i -e 's/\-fPIC//g'  $tmp
+	sed -i -e 's/lib\([^\/]*\)\.so/\1/g'  $tmp
+	sed -i -e 's/\.so//g' $tmp
+	sed -i -e 's/\-shared//g' $tmp 
 	cat $tmp
 	echo
 	echo
