@@ -63,18 +63,35 @@ void mexFunction( int nlhs, mxArray *plhs[], int nrhs, const mxArray*prhs[])
 
 
 
-  if (mxGetNumberOfDimensions(prhs[1]) != 2 ||
-      mxGetNumberOfDimensions(prhs[2]) != 2 ||
-      mxGetNumberOfDimensions(prhs[3]) != 2){
+  if (mxGetNumberOfDimensions(prhs[1]) != 2){
     usage();
-    mexErrMsgTxt("V, F and S arrays must be two dimensional.");
+    mexErrMsgTxt("V array must be two dimensional.");
   }
 
-  if (! mxIsClass(prhs[1], "single") ||
-      ! mxIsClass(prhs[2], "uint32") ||
-      ! mxIsClass(prhs[3], "single")  ){
+  if (mxGetNumberOfDimensions(prhs[2]) != 2){
     usage();
-    mexErrMsgTxt("V and S must be single arrays and F must be a uint32 (unsigned long) array.");
+    mexErrMsgTxt("F must be two dimensional.");
+  }
+
+  if (mxGetNumberOfDimensions(prhs[3]) != 2){
+    usage();
+    mexErrMsgTxt("S array must be two dimensional.");
+  }
+
+
+  if (! mxIsClass(prhs[1], "single")){
+    usage();
+    mexErrMsgTxt("V be a single precision array.");
+  }
+
+  if (! mxIsClass(prhs[2], "uint32")){
+    usage();
+    mexErrMsgTxt("F must be a uint32 (unsigned long) array.");
+  }
+
+  if (! mxIsClass(prhs[3], "single")){
+    usage();
+    mexErrMsgTxt("S must be a single precison array.");
   }
 
   const mwSize *vdims = mxGetDimensions(prhs[1]);

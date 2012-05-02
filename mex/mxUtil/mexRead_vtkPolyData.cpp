@@ -55,6 +55,8 @@ void copyFaces(vtkCellArray *src, vtkCellArray *dest){
   }
   dest->Squeeze();
 }
+
+
 void usage(){
   cout << " Usage: " << endl;
   cout << "    [V, F]    = Read_vtkPolyData(FILE)" << endl;
