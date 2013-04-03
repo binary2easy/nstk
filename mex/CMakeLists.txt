@@ -5,11 +5,11 @@ PROJECT(nstkMex)
 #
 
 
-cmake_minimum_required(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+IF(COMMAND CMAKE_POLICY)
+  CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
 
 
 ############################################
@@ -114,40 +114,47 @@ ENDIF (VTK_FOUND)
 
 # # IRTK
 
-# SET(IRTK_DIRECTORY NOT_FOUND
-#         CACHE PATH "Where the IRTK is installed")
+SET(IRTK_DIRECTORY NOT_FOUND
+        CACHE PATH "Where the IRTK is installed")
 
-# IF( ${IRTK_DIRECTORY} STREQUAL "NOT_FOUND")
+IF( ${IRTK_DIRECTORY} STREQUAL "NOT_FOUND")
 
-#     MESSAGE(FATAL_ERROR
-#       "Cannot build without IRTK.  Please set IRTK_DIRECTORY.")
-# ENDIF()
+    MESSAGE(FATAL_ERROR
+      "Cannot build without IRTK.  Please set IRTK_DIRECTORY.")
+ENDIF()
 
-# SET(IRTK_BUILD_DIRECTORY_SUFFIX "build" CACHE STRING "The directory beneath the IRTK folder where the build is")
+SET(IRTK_BUILD_DIRECTORY_SUFFIX "build" CACHE STRING "The directory beneath the IRTK folder where the build is")
 
 
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/recipes/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/common++/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/geometry++/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/image++/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/contrib++/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/nifti/niftilib)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/nifti/znzlib)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/recipes/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/common++/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/geometry++/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/image++/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/contrib++/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/nifti/niftilib)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/nifti/znzlib)
 
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/transformation/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/registration/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/segmentation/include)
-# INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/contrib/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/transformation/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/registration/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/segmentation/include)
+INCLUDE_DIRECTORIES( ${IRTK_DIRECTORY}/packages/contrib/include)
 
-# SET(IRTK_LIB_DIRECTORY ${IRTK_DIRECTORY}/${IRTK_BUILD_DIRECTORY_SUFFIX}/lib
-#        CACHE STRING "Where the IRTK Library files are installed")
+SET(IRTK_LIB_DIRECTORY ${IRTK_DIRECTORY}/${IRTK_BUILD_DIRECTORY_SUFFIX}/lib
+       CACHE STRING "Where the IRTK Library files are installed")
 
-# LINK_DIRECTORIES(${IRTK_LIB_DIRECTORY})
+LINK_DIRECTORIES(${IRTK_LIB_DIRECTORY})
 
-# LINK_LIBRARIES(common++ contrib++ geometry++ image++
-#   niftiio recipes registration++
-#   segmentation++ transformation++ znz)
+LINK_LIBRARIES(common++ contrib++ geometry++ image++
+  niftiio recipes registration++
+  segmentation++ transformation++ znz)
 
+
+INCLUDE(${CMAKE_ROOT}/Modules/FindZLIB.cmake)
+
+IF (ZLIB_FOUND)
+  INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
+  LINK_LIBRARIES(${ZLIB_LIBRARIES})
+ENDIF (ZLIB_FOUND)
 
 ############################################
 

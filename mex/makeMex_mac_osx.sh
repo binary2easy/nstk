@@ -34,6 +34,7 @@ trap 'echo "Exiting and cleaning up ... removing ${tmpD}"; rm -rf $tmpD' EXIT
 cd $buildDir
 
 tmp=$tmpD/tmp.txt
+MATLAB_DIR="\/Applications\/MATLAB_R2012a.app"
 
 for d in $subDirs
 do
@@ -45,19 +46,23 @@ do
     do
 	cp $f $tmp
 	# Replace the build tool
-	sed -i -e 's|.*c\+\+|\/Applications\/MATLAB_R2011b.app\/bin\/mex|' $tmp
+	sed -i -e "s|.*c\+\+|${MATLAB_DIR}\/bin\/mex|" $tmp
 	sed -i -e 's/\-Wl,[^ ]* //g' $tmp
-	sed -i -e 's/\-install_name [^ ]* //g'  $tmp
-	sed -i -e 's/lib\([^\/]*\)\.dylib/\1/g'  $tmp
+	sed -i -e 's/\-install_name  *[^ ]* //g'  $tmp
+	# Ensure output file is sorted first.
+	sed -i -e 's/\-o  *\([^ ][^ ]*\/\)lib\([^\/]*\)\.dylib /-o \1\2 /g'  $tmp
+	# Replace any explicitly listed libraries with the -lXX format.
+	sed -i -e 's|[^ ][^ ]*lib\([^\/]*\)\.dylib|-l\1|g'  $tmp
 	sed -i -e 's/\.dylib//g' $tmp
 	sed -i -e 's/\-dynamiclib//g' $tmp 
 	sed -i -e 's/\-framework [^ ]* //g' $tmp
 	cat $tmp
 	echo
 	echo
-
 	cmd=`cat $tmp`
 	eval $cmd
+
+	echo
     done
     cd -
 done
