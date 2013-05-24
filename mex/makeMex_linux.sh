@@ -35,6 +35,9 @@ cd $buildDir
 
 tmp=$tmpD/tmp.txt
 
+# WARNING, SOMETIMES NEED TO ADD MORE LIBRARIES AT THE END OF LINK LINE: EG:
+# -lcommon++ -limage++ -lgeometry++ -lcontrib++ -limage++ -lrecipes -lpng
+
 for d in $subDirs
 do
     cd $d
