@@ -45,11 +45,11 @@ do
     do
 	cp $f $tmp
 	# # Replace the build tool
-	sed -i -e 's|^.*c++|\/usr\/lib\/matlab\/R2011b\/bin\/mex|' $tmp
+	sed -i -e 's|^.*c++|\/usr\/local\/matlab\/bin\/mex|' $tmp
 	sed -i -e 's/\-Wl,[^ ]* //g' $tmp
 	sed -i -e 's/\-fPIC//g'  $tmp
-	sed -i -e 's/lib\([^\/]*\)\.so/\1/g'  $tmp
-	sed -i -e 's/\.so//g' $tmp
+	sed -i -e 's/\(\-o [^ ]\)*lib\([^\/]*\)\.so/\1\2/'  $tmp
+	#sed -i -e 's/\.so//g' $tmp
 	sed -i -e 's/\-shared//g' $tmp 
 	cat $tmp
 	echo
