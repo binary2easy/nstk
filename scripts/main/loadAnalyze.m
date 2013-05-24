@@ -43,9 +43,9 @@ if (nargin < 2)
     realOrGrey = 'Real';
 end
 
-if ( strcmp(realOrGrey, 'Grey') == 1 )
+if ( strcmpi(realOrGrey, 'grey') == 1 )
     data = uint32(data);
-elseif (strcmp(realOrGrey, 'Real') == 1)
+elseif (strcmpi(realOrGrey, 'real') == 1)
     data = single(data);
 end
 
@@ -96,9 +96,9 @@ header.nii.machine  = nii.machine;
 % cd (savedDir);
 
 
-% if ( strcmp(realORgrey, 'Grey') == 1 )
+% if ( strcmpi(realORgrey, 'Grey') == 1 )
 %     data = uint32(data);
-% elseif (strcmp(realORgrey, 'Real') == 1)
+% elseif (strcmpi(realORgrey, 'Real') == 1)
 %     data = single(data);
 % end
 
