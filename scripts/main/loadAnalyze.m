@@ -1,32 +1,22 @@
 function [data, header] = loadAnalyze(analyzename, realOrGrey)
 
 % loadAnalyze, read an analyze file(.hdr) and output mxArrays
-% input: name of analyze file, label of Grey image('Grey') or Real image('Real')
-% output:data, header
+% input   : name of analyze file
+%           label of data type, 
+%               Short integer UINT32 ('Grey') or 
+%               Floating point single ('Real') 
+% output  : data and header.
 % Grey: UINT32; Real: single
-%
-% reimplement this function using the matlab analyze75read
-%
-% [data, header] = LoadAnalyze_mex(analyzename, realOrGrey);
-% header
-%
-% argument is 'analyzename' but can load nii also...
-%
-% still need to incorporate ability to open *.nii.gz files.
+
 
 if ~exist(analyzename, 'file');
-  header = struct([]);
-  data   = [];
   error('loadAnalyzeHeader : no such file : %s', analyzename);
-  return
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Modified version of Hui's script. Try and wrap Jimmy Shen's NIFTI i/o
-% scripts into this one.
 
-if (findstr('.nii.gz', analyzename))
+if (strfind(analyzename, '.nii.gz'))
     randstr = ['temp-' strrep(num2str(rand), '0.', '') '.nii'];
     fileUnzipped = gunzip(analyzename);
     movefile(char(fileUnzipped), randstr);
@@ -49,11 +39,9 @@ elseif (strcmpi(realOrGrey, 'real') == 1)
     data = single(data);
 end
 
-% Hui was flipping the data before, really not sure why this is needed if
-% we're reading an hdr/img pair.
-% data(1:header.ysize, : ,:) = data(header.ysize:-1:1, : ,:);
-if findstr('.hdr', analyzename)
-  data = flipdim(data, 2); % y-flip
+if strfind(analyzename, '.hdr')
+  % y-flip
+  data = flipdim(data, 2);
 end
 
 % Return the same header Hui was returning.
