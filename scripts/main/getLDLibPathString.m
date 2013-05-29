@@ -1,4 +1,9 @@
 function ldLibPathString = getLDLibPathString
+%
+% Fixes some library loading errors that can happen on Linux installations
+% of MatLab. Sometimes, the MatLab install puts stuff first in the load
+% library path set that can affect system calls.
+%
 
 ldLibPathString = '';
 
@@ -6,8 +11,7 @@ if ~strfind(computer, 'GLNX')
   return
 end
 
-% Linux box.
-
+% Seem to be on a Linux box.
 % Which shell?
 
 shellType = getenv('SHELL');

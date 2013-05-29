@@ -17,7 +17,7 @@ end
 
 
 if (strfind(analyzename, '.nii.gz'))
-    randstr = ['temp-' strrep(num2str(rand), '0.', '') '.nii'];
+    randstr = sprintf('temp-%u.nii', randi(1000000));
     fileUnzipped = gunzip(analyzename);
     movefile(char(fileUnzipped), randstr);
     nii = load_nii(randstr);
