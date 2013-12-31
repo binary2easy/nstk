@@ -57,6 +57,11 @@ flip_orient = header.nii.hdr.hist.flip_orient;
 
 if (~isempty(rot_orient))
   % Note: Inverse permutation.
+  imgDim = numel(size(nii.img));
+  if imgDim > 3
+    rot_orient = [rot_orient 4:imgDim];
+    flip_orient(imgDim) = 0;
+  end
   nii.img = ipermute(nii.img, rot_orient);
   
   if (~isempty(flip_orient))
