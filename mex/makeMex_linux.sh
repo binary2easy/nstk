@@ -24,8 +24,12 @@
 
 
 buildDir="build"
+# buildDir="build2"
 
 subDirs="mxUtil"
+
+matlabVersion="R2012a"
+# matlabVersion="R2011b"
 
 
 tmpD=` mktemp -d /tmp/tmp.XXXXXX `
@@ -48,7 +52,7 @@ do
     do
 	cp $f $tmp
 	# # Replace the build tool
-	sed -i -e 's|^.*c++|\/usr\/local\/matlab\/bin\/mex|' $tmp
+	sed -i -e "s|^.*c++|\/usr\/lib\/matlab\/${matlabVersion}\/bin\/mex|" $tmp
 	sed -i -e 's/\-Wl,[^ ]* //g' $tmp
 	sed -i -e 's/\-fPIC//g'  $tmp
 	sed -i -e 's/\(\-o [^ ]\)*lib\([^\/]*\)\.so/\1\2/'  $tmp
