@@ -1,5 +1,5 @@
 function createDirStructure(rootDir)
-
+% rootDir : ABSOLUTE path to where the files are
 saveDir = pwd;
 
 cd(rootDir)
